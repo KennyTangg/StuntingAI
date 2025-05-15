@@ -54,70 +54,6 @@ const ProgressTrackingIcon = () => (
 
 export default function Home() {
   const navigate = useNavigate();
-  // Hero section state
-  const [activeSlide, setActiveSlide] = useState(0);
-
-  const heroSlides = [
-    {
-      title: "Early Detection",
-      description: "Identify growth issues before they become severe",
-      icon: (
-        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-      ),
-      chart: (
-        <svg className="w-full h-full" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,50 C50,20 100,80 150,50 C200,20 250,80 300,50 C350,20 400,50 400,50"
-                fill="none"
-                stroke="#3b82f6"
-                strokeWidth="3" />
-        </svg>
-      )
-    },
-    {
-      title: "Risk Assessment",
-      description: "Identify potential growth issues early",
-      icon: (
-        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      ),
-      chart: (
-        <svg className="w-full h-full" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,80 L50,70 L100,60 L150,40 L200,30 L250,20 L300,10 L350,5 L400,0"
-                fill="none"
-                stroke="#3b82f6"
-                strokeWidth="3" />
-        </svg>
-      )
-    },
-    {
-      title: "Intervention Plans",
-      description: "Personalized recommendations for optimal outcomes",
-      icon: (
-        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-        </svg>
-      ),
-      chart: (
-        <svg className="w-full h-full" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,50 L100,50 L100,30 L200,30 L200,10 L300,10 L300,50 L400,50"
-                fill="none"
-                stroke="#3b82f6"
-                strokeWidth="3" />
-        </svg>
-      )
-    }
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [heroSlides.length]);
 
   // Carousel Component
   const Carousel = () => {
@@ -279,65 +215,8 @@ export default function Home() {
           </div>
 
           <div className="md:w-1/2 relative">
-            <div className="bg-[#111827]/70 rounded-lg p-6 shadow-lg max-w-md mx-auto">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center">
-                  {heroSlides[activeSlide].icon}
-                </div>
-                <div className="ml-3">
-                  <h3 className="font-semibold text-white">{heroSlides[activeSlide].title}</h3>
-                  <p className="text-sm text-slate-400">{heroSlides[activeSlide].description}</p>
-                </div>
-              </div>
-
-              <div className="relative h-48 bg-[#111827]/50 rounded-lg overflow-hidden flex items-center justify-center p-4">
-                {heroSlides[activeSlide].chart}
-              </div>
-
-              <div className="flex justify-center items-center mt-4">
-                <button
-                  onClick={() => setActiveSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1))}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-[#111827]/50 text-slate-300 absolute left-4"
-                  aria-label="Previous slide"
-                >
-                  <PrevIcon />
-                </button>
-
-                <div className="flex space-x-2">
-                  {heroSlides.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActiveSlide(index)}
-                      className={`w-2 h-2 rounded-full ${index === activeSlide ? 'bg-white' : 'bg-slate-700'}`}
-                      aria-label={`Go to slide ${index + 1}`}
-                    />
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => setActiveSlide((prev) => (prev === heroSlides.length - 1 ? 0 : prev + 1))}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-[#111827]/50 text-slate-300 absolute right-4"
-                  aria-label="Next slide"
-                >
-                  <NextIcon />
-                </button>
-              </div>
-            </div>
+            <Carousel />
           </div>
-        </div>
-      </div>
-
-      {/* Advanced Carousel Section */}
-      <div className="py-16 bg-[#0f172a]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Our Advanced Solutions</h2>
-            <p className="text-slate-300 max-w-2xl mx-auto">
-              Explore how our platform helps healthcare providers monitor and prevent stunting in children.
-            </p>
-          </div>
-
-          <Carousel />
         </div>
       </div>
 
