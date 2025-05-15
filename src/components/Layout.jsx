@@ -47,7 +47,7 @@ export default function Layout() {
           
           <div className="pt-8 mt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-start">
             <p className="text-sm text-slate-500 mb-4 md:mb-0 text-left">
-              © 2023 StuntingAI. All rights reserved.
+              © {new Date().getFullYear()} StuntingAI. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <a href="#" className="text-sm text-slate-500 hover:text-white transition">

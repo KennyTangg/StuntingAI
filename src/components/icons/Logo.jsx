@@ -1,17 +1,11 @@
 export default function Logo() {
   return (
-    <svg 
-      width="32" 
-      height="32" 
-      viewBox="0 0 32 32" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect width="32" height="32" rx="8" fill="#3B82F6" />
-      <path 
-        d="M10 22V10L22 16L10 22Z" 
-        fill="white" 
-      />
-    </svg>
+<img 
+  src="./stunting ai logo.png" 
+  width="32" 
+  height="32" 
+  alt="Stunting AI Logo" 
+/>
+
   );
 }
