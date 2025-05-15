@@ -5,6 +5,7 @@ import About from './pages/About';
 import Features from './pages/Features';
 import Contact from './pages/Contact';
 import GetStarted from './pages/GetStarted';
+import AssessmentResults from './pages/AssessmentResults';
 import './App.css';
 
 export default function App() {
@@ -32,6 +33,10 @@ export default function App() {
         {
           path: "get-started",
           element: <GetStarted />
+        },
+        {
+          path: "assessment-results",
+          element: <AssessmentResults />
         }
       ]
     }

@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function GetStarted() {
+  const navigate = useNavigate();
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [fileName, setFileName] = useState('');
@@ -43,13 +45,13 @@ export default function GetStarted() {
 
     if (e.dataTransfer.files.length) {
       const file = e.dataTransfer.files[0];
-      
+
       // Check file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('File is too large. Maximum size is 5MB.');
         return;
       }
-      
+
       setPhotoFile(file);
       setFileName(file.name);
 
@@ -73,7 +75,7 @@ export default function GetStarted() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Get form values
     const formData = new FormData(e.target);
     const ageYears = formData.get('ageYears');
@@ -81,31 +83,27 @@ export default function GetStarted() {
     const gender = formData.get('gender');
     const height = formData.get('height');
     const weight = formData.get('weight');
-    
-    // Display collected data (for demo purposes)
-    console.log({
-      age: {
-        years: ageYears,
-        months: ageMonths
-      },
+
+    // Create child info object
+    const childInfo = {
+      ageYears,
+      ageMonths,
       gender,
       height,
       weight,
-      photo: photoFile ? photoFile.name : 'No photo uploaded'
-    });
-    
+      photo: photoFile ? photoFile.name : null
+    };
+
+    // Display collected data (for demo purposes)
+    console.log(childInfo);
+
     // Show success message
     setShowSuccess(true);
-    
-    // In a real application, you would send this data to your server
-    // For this demo, we'll just reset the form after 2 seconds
+
+    // Navigate to assessment results page with the collected data
     setTimeout(() => {
-      setShowSuccess(false);
-      formRef.current.reset();
-      setPhotoFile(null);
-      setPhotoPreview(null);
-      setFileName('');
-    }, 2000);
+      navigate('/assessment-results', { state: { childInfo } });
+    }, 1000);
   };
 
   return (
@@ -115,39 +113,39 @@ export default function GetStarted() {
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Get Started</h1>
           <p className="text-gray-600">Please provide your child's information to continue</p>
         </div>
-        
+
         <form ref={formRef} onSubmit={handleSubmit}>
           {/* Age Field */}
           <div className="mb-5">
             <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">Age</label>
             <div className="flex gap-4">
               <div className="w-1/2">
-                <input 
-                  type="number" 
-                  id="ageYears" 
-                  name="ageYears" 
-                  placeholder="Years" 
-                  min="0" 
-                  max="5" 
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
-                  required 
+                <input
+                  type="number"
+                  id="ageYears"
+                  name="ageYears"
+                  placeholder="Years"
+                  min="0"
+                  max="5"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  required
                 />
               </div>
               <div className="w-1/2">
-                <input 
-                  type="number" 
-                  id="ageMonths" 
-                  name="ageMonths" 
-                  placeholder="Months" 
-                  min="0" 
-                  max="11" 
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
-                  required 
+                <input
+                  type="number"
+                  id="ageMonths"
+                  name="ageMonths"
+                  placeholder="Months"
+                  min="0"
+                  max="11"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  required
                 />
               </div>
             </div>
           </div>
-          
+
           {/* Gender Field */}
           <div className="mb-5">
             <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
@@ -162,67 +160,67 @@ export default function GetStarted() {
               </label>
             </div>
           </div>
-          
+
           {/* Height Field */}
           <div className="mb-5">
             <label htmlFor="height" className="block text-sm font-medium text-gray-700 mb-1">Height (cm)</label>
             <div className="relative">
-              <input 
-                type="number" 
-                id="height" 
-                name="height" 
-                placeholder="Enter child's height" 
-                min="1" 
-                max="300" 
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
-                required 
+              <input
+                type="number"
+                id="height"
+                name="height"
+                placeholder="Enter child's height"
+                min="1"
+                max="300"
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                required
               />
               <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">cm</span>
             </div>
           </div>
-          
+
           {/* Weight Field */}
           <div className="mb-5">
             <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-1">Weight (kg)</label>
             <div className="relative">
-              <input 
-                type="number" 
-                id="weight" 
-                name="weight" 
-                placeholder="Enter child's weight" 
-                min="1" 
-                max="500" 
-                step="0.1" 
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
-                required 
+              <input
+                type="number"
+                id="weight"
+                name="weight"
+                placeholder="Enter child's weight"
+                min="1"
+                max="500"
+                step="0.1"
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                required
               />
               <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">kg</span>
             </div>
           </div>
-          
+
           {/* Photo Upload Field */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
             <p className="text-xs text-gray-500 mb-2">Please attach a clear shirtless photo of baby</p>
-            
-            <div 
+
+            <div
               className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-all ${photoPreview ? 'border-blue-500' : 'border-gray-200 hover:border-blue-500 hover:bg-blue-50'}`}
               onClick={() => fileInputRef.current.click()}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              <input 
-                type="file" 
+              <input
+                type="file"
                 ref={fileInputRef}
-                id="photoUpload" 
-                name="photoUpload" 
-                accept="image/*" 
-                className="hidden" 
+                id="photoUpload"
+                name="photoUpload"
+                accept="image/*"
+                className="hidden"
                 onChange={handleFileChange}
-                required 
+                required
               />
-              
+
               {!photoPreview ? (
                 <div className="py-8">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -235,8 +233,8 @@ export default function GetStarted() {
                 <div className="flex flex-col items-center">
                   <img className="max-h-[200px] object-contain rounded mb-2" src={photoPreview} alt="Preview" />
                   <p className="text-sm text-gray-600 truncate max-w-full">{fileName}</p>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="text-xs text-red-500 mt-1"
                     onClick={removePhoto}
                   >
@@ -246,16 +244,16 @@ export default function GetStarted() {
               )}
             </div>
           </div>
-          
+
           {/* Submit Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-all transform hover:-translate-y-1 hover:shadow-lg"
           >
             Continue
           </button>
         </form>
-        
+
         {/* Success Message */}
         {showSuccess && (
           <div className="mt-4 p-4 bg-green-50 text-green-700 rounded-lg">

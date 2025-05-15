@@ -8,7 +8,7 @@
   font-weight: 400;
 }
 
-/* Add these keyframes to your index.css file */
+/* Carousel animations */
 @keyframes slideLeft {
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
@@ -27,6 +27,34 @@
   animation: slideRight 500ms ease-in forwards;
 }
 
+/* Progress bar animation */
+.progress-bar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 1s ease-in-out;
+}
 
+/* Fade-in animations for assessment results */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
 
+.fade-in-delay-1 {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out 0.2s forwards;
+}
+
+.fade-in-delay-2 {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out 0.4s forwards;
+}
+
+.fade-in-delay-3 {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out 0.6s forwards;
+}
