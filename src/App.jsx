@@ -29,16 +29,16 @@ export default function App() {
         {
           path: "contact",
           element: <Contact />
-        },
-        {
-          path: "get-started",
-          element: <GetStarted />
-        },
-        {
-          path: "assessment-results",
-          element: <AssessmentResults />
         }
       ]
+    },
+    {
+      path: "/get-started",
+      element: <GetStarted />
+    },
+    {
+      path: "/assessment-results",
+      element: <AssessmentResults />
     }
   ]);
 

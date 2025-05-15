@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function AssessmentResults() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isStunted, setIsStunted] = useState(true);
   const [childData, setChildData] = useState({
     name: "Sarah Johnson",
@@ -51,6 +52,19 @@ export default function AssessmentResults() {
   return (
     <div className="bg-[#0a1122] text-slate-100 py-8 px-4">
       <div className="max-w-7xl mx-auto">
+        {/* Back Button */}
+        <div className="mb-6">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center text-blue-400 hover:text-blue-300 transition-colors"
+          >
+            <svg className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Home
+          </button>
+        </div>
+
         {/* Main Content */}
         <main>
           {/* Child Info Card */}

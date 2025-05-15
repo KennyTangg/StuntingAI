@@ -107,12 +107,26 @@ export default function GetStarted() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[#0a1122]">
-      <div className="bg-white w-full max-w-md p-8 rounded-xl shadow-lg">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Get Started</h1>
-          <p className="text-gray-600">Please provide your child's information to continue</p>
-        </div>
+    <div className="min-h-screen flex flex-col p-4 bg-[#0a1122]">
+      {/* Back Button */}
+      <div className="max-w-md mx-auto w-full mb-4">
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center text-blue-400 hover:text-blue-300 transition-colors"
+        >
+          <svg className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to Home
+        </button>
+      </div>
+
+      <div className="flex items-center justify-center flex-grow">
+        <div className="bg-white w-full max-w-md p-8 rounded-xl shadow-lg">
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">Get Started</h1>
+            <p className="text-gray-600">Please provide your child's information to continue</p>
+          </div>
 
         <form ref={formRef} onSubmit={handleSubmit}>
           {/* Age Field */}
@@ -260,6 +274,7 @@ export default function GetStarted() {
             Information submitted successfully!
           </div>
         )}
+        </div>
       </div>
     </div>
   );
