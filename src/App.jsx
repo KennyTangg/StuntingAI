@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Features from './pages/Features';
 import Contact from './pages/Contact';
+import GetStarted from './pages/GetStarted';
 import './App.css';
 
 export default function App() {
@@ -27,6 +28,10 @@ export default function App() {
         {
           path: "contact",
           element: <Contact />
+        },
+        {
+          path: "get-started",
+          element: <GetStarted />
         }
       ]
     }

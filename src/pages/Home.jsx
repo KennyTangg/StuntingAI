@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Icon components
 const PrevIcon = () => (
@@ -52,9 +53,10 @@ const ProgressTrackingIcon = () => (
 );
 
 export default function Home() {
+  const navigate = useNavigate();
   // Hero section state
   const [activeSlide, setActiveSlide] = useState(0);
-  
+
   const heroSlides = [
     {
       title: "Early Detection",
@@ -66,9 +68,9 @@ export default function Home() {
       ),
       chart: (
         <svg className="w-full h-full" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,50 C50,20 100,80 150,50 C200,20 250,80 300,50 C350,20 400,50 400,50" 
-                fill="none" 
-                stroke="#3b82f6" 
+          <path d="M0,50 C50,20 100,80 150,50 C200,20 250,80 300,50 C350,20 400,50 400,50"
+                fill="none"
+                stroke="#3b82f6"
                 strokeWidth="3" />
         </svg>
       )
@@ -83,9 +85,9 @@ export default function Home() {
       ),
       chart: (
         <svg className="w-full h-full" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,80 L50,70 L100,60 L150,40 L200,30 L250,20 L300,10 L350,5 L400,0" 
-                fill="none" 
-                stroke="#3b82f6" 
+          <path d="M0,80 L50,70 L100,60 L150,40 L200,30 L250,20 L300,10 L350,5 L400,0"
+                fill="none"
+                stroke="#3b82f6"
                 strokeWidth="3" />
         </svg>
       )
@@ -100,9 +102,9 @@ export default function Home() {
       ),
       chart: (
         <svg className="w-full h-full" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,50 L100,50 L100,30 L200,30 L200,10 L300,10 L300,50 L400,50" 
-                fill="none" 
-                stroke="#3b82f6" 
+          <path d="M0,50 L100,50 L100,30 L200,30 L200,10 L300,10 L300,50 L400,50"
+                fill="none"
+                stroke="#3b82f6"
                 strokeWidth="3" />
         </svg>
       )
@@ -113,46 +115,35 @@ export default function Home() {
     const interval = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
-    
+
     return () => clearInterval(interval);
   }, [heroSlides.length]);
 
   // Carousel Component
   const Carousel = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [direction, setDirection] = useState('right');
-    const [isAnimating, setIsAnimating] = useState(false);
     const totalSlides = 3;
-    
+
     useEffect(() => {
       const interval = setInterval(() => {
         goToNextSlide();
       }, 5000);
-      
+
       return () => clearInterval(interval);
     }, []);
-    
+
     const goToSlide = (index) => {
-      setDirection(index > currentSlide ? 'left' : 'right');
-      setIsAnimating(true);
       setCurrentSlide(index);
-      setTimeout(() => setIsAnimating(false), 500);
     };
-    
+
     const goToPrevSlide = () => {
-      setDirection('right');
-      setIsAnimating(true);
       setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
-      setTimeout(() => setIsAnimating(false), 500);
     };
-    
+
     const goToNextSlide = () => {
-      setDirection('left');
-      setIsAnimating(true);
       setCurrentSlide((prev) => (prev + 1) % totalSlides);
-      setTimeout(() => setIsAnimating(false), 500);
     };
-    
+
     const slides = [
       {
         id: 1,
@@ -208,12 +199,12 @@ export default function Home() {
         )
       }
     ];
-    
+
     return (
       <div className="relative h-[400px] overflow-hidden rounded-xl shadow-xl">
-        <div className="flex h-full w-full transition-transform duration-500 ease-in-out" 
+        <div className="flex h-full w-full transition-transform duration-500 ease-in-out"
              style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
-          {slides.map((slide, index) => (
+          {slides.map((slide) => (
             <div key={slide.id} className="min-w-full h-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-800 to-slate-900">
               <div className="card p-6 rounded-xl w-full max-w-md">
                 <div className="flex items-center mb-4">
@@ -232,27 +223,27 @@ export default function Home() {
             </div>
           ))}
         </div>
-        
+
         {/* Carousel Controls */}
         <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
           {slides.map((_, index) => (
-            <button 
+            <button
               key={index}
               onClick={() => goToSlide(index)}
               className={`w-3 h-3 rounded-full transition ${currentSlide === index ? 'bg-white' : 'bg-white opacity-50 hover:opacity-75'}`}
             />
           ))}
         </div>
-        
+
         {/* Carousel Navigation Arrows */}
         <div className="absolute inset-0 flex items-center justify-between p-4">
-          <button 
+          <button
             onClick={goToPrevSlide}
             className="p-1 rounded-full bg-black/30 text-white hover:bg-black/50 focus:outline-none"
           >
             <PrevIcon />
           </button>
-          <button 
+          <button
             onClick={goToNextSlide}
             className="p-1 rounded-full bg-black/30 text-white hover:bg-black/50 focus:outline-none"
           >
@@ -275,15 +266,18 @@ export default function Home() {
               with AI Technology
             </h1>
             <p className="text-slate-300 mb-8 max-w-lg">
-              Our advanced AI platform helps healthcare providers identify, 
-              track, and prevent stunting in children through early detection 
+              Our advanced AI platform helps healthcare providers identify,
+              track, and prevent stunting in children through early detection
               and personalized intervention plans.
             </p>
-            <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg">
+            <button
+              onClick={() => navigate('/get-started')}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg"
+            >
               Get Started
             </button>
           </div>
-          
+
           <div className="md:w-1/2 relative">
             <div className="bg-[#111827]/70 rounded-lg p-6 shadow-lg max-w-md mx-auto">
               <div className="flex items-center mb-4">
@@ -295,23 +289,23 @@ export default function Home() {
                   <p className="text-sm text-slate-400">{heroSlides[activeSlide].description}</p>
                 </div>
               </div>
-              
+
               <div className="relative h-48 bg-[#111827]/50 rounded-lg overflow-hidden flex items-center justify-center p-4">
                 {heroSlides[activeSlide].chart}
               </div>
-              
+
               <div className="flex justify-center items-center mt-4">
-                <button 
+                <button
                   onClick={() => setActiveSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1))}
                   className="w-8 h-8 flex items-center justify-center rounded-full bg-[#111827]/50 text-slate-300 absolute left-4"
                   aria-label="Previous slide"
                 >
                   <PrevIcon />
                 </button>
-                
+
                 <div className="flex space-x-2">
                   {heroSlides.map((_, index) => (
-                    <button 
+                    <button
                       key={index}
                       onClick={() => setActiveSlide(index)}
                       className={`w-2 h-2 rounded-full ${index === activeSlide ? 'bg-white' : 'bg-slate-700'}`}
@@ -319,8 +313,8 @@ export default function Home() {
                     />
                   ))}
                 </div>
-                
-                <button 
+
+                <button
                   onClick={() => setActiveSlide((prev) => (prev === heroSlides.length - 1 ? 0 : prev + 1))}
                   className="w-8 h-8 flex items-center justify-center rounded-full bg-[#111827]/50 text-slate-300 absolute right-4"
                   aria-label="Next slide"
@@ -332,7 +326,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      
+
       {/* Advanced Carousel Section */}
       <div className="py-16 bg-[#0f172a]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -342,11 +336,11 @@ export default function Home() {
               Explore how our platform helps healthcare providers monitor and prevent stunting in children.
             </p>
           </div>
-          
+
           <Carousel />
         </div>
       </div>
-      
+
       {/* Features Section */}
       <div className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -357,7 +351,7 @@ export default function Home() {
               comprehensive growth monitoring solutions.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-[#111827]/70 rounded-xl p-6 shadow-lg border border-slate-700/50 hover:border-blue-500/30 transition-all text-left">
               <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
@@ -382,7 +376,7 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-            
+
             <div className="bg-[#111827]/70 rounded-xl p-6 shadow-lg border border-slate-700/50 hover:border-blue-500/30 transition-all text-left">
               <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
                 <AIIcon />
@@ -406,7 +400,7 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-            
+
             <div className="bg-[#111827]/70 rounded-xl p-6 shadow-lg border border-slate-700/50 hover:border-blue-500/30 transition-all text-left">
               <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
                 <PlanIcon />
@@ -433,7 +427,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      
+
       {/* Call to Action Section */}
       <div className="bg-blue-900 py-16 w-screen self-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -442,7 +436,10 @@ export default function Home() {
             Join healthcare providers worldwide who are using StuntingAI to improve child health
             outcomes and prevent stunting.
           </p>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg">
+          <button
+            onClick={() => navigate('/get-started')}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg"
+          >
             Get Started Today
           </button>
         </div>
