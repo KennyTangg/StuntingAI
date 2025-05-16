@@ -1,0 +1,21 @@
+{
+  "name": "StuntingAI",
+  "short_name": "StuntingAI",
+  "description": "Advanced AI technology for monitoring and preventing child stunting",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1122",
+  "theme_color": "#0a1122",
+  "icons": [
+    {
+      "src": "stunting ai logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "stunting ai logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
