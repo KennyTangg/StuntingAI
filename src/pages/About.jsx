@@ -29,27 +29,27 @@ export default function About() {
   // Team members data
   const teamMembers = [
     {
-      name: "Dr. Sarah Johnson",
-      role: "Medical Director",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
+      name: "Kenny Tang",
+      role: "Full stack and lead developer",
+      image: "https://avatars.githubusercontent.com/u/176812628?v=4",
       bio: "Pediatrician with 15 years of experience in child growth and development."
     },
     {
-      name: "Michael Chen",
-      role: "Lead Data Scientist",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
+      name: "William Rusmana",
+      role: "Front end developer",
+      image: "https://avatars.githubusercontent.com/u/93782439?v=4",
       bio: "Expert in machine learning with a focus on healthcare applications."
     },
     {
-      name: "Priya Patel",
-      role: "Software Engineer",
-      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
+      name: "Michael",
+      role: "Designer",
+      image: "https://avatars.githubusercontent.com/u/181051398?v=4",
       bio: "Full-stack developer specializing in healthcare technology solutions."
     },
     {
-      name: "Dr. James Wilson",
-      role: "Nutrition Specialist",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
+      name: "Tiffany",
+      role: "Back end developer",
+      image: "https://avatars.githubusercontent.com/u/61628016?v=4",
       bio: "Expert in pediatric nutrition and growth interventions."
     }
   ];
@@ -169,7 +169,7 @@ export default function About() {
           </div>
         </div>
       </div>
-      
+
       {/* Team Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-bold text-white text-center mb-12">Our Team</h2>

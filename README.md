@@ -1,12 +1,90 @@
-# React + Vite
+**APAC Solution Challenge May 2025**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Theme: [Healthcare]
 
-Currently, two official plugins are available:
+Requirement: Using Gemini / Gemma
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Team: Banana [BINUS International, Jakarta]
 
-## Expanding the ESLint configuration
+* William
+* Kenny
+* Tiffany
+* Michael
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# Project Overview
+
+## Stunting AI
+
+*Monitor and prevent child stunting with AI technology*
+
+### Problem statement
+
+Child stunting due to malnutrition leads to long-term physical and cognitive issues. Diagnosis is often delayed due to lack of accessible tools. Prevent the growth stunting of a baby due to malnutrition by scanning whether a baby is stunted or not.
+
+### Solution summary
+
+A fast-deploy, AI-assisted screening tool that helps caregivers or health workers input basic data and get an instant risk evaluation using Gemini/Gemma.
+
+# Tech Stack
+
+Web app.
+
+* Frontend: **React + Vite**
+* Styling: **Vanilla CSS**
+* Linting: **ESLint**
+* Deployment: **Vercel**
+* AI: **Gemini API wrapper**
+
+# Features / Functionality
+
+* Easy navigation
+* Phone compatibility
+
+# Usage Instructions (Live)
+
+1. Go to [https://stunting-ai.vercel.app/](https://stunting-ai.vercel.app/ "Go to website")
+2. Click "Get Started"
+3. Fill out the form
+4. Click "Continue to Assessment" and get results
+
+# Local setup
+
+```
+git clone https://github.com/yourusername/stunting-ai.git
+cd stunting-ai
+npm install
+```
+
+Create a `.env` file:
+
+```
+VITE_GEMINI_API_KEY=your_key_here
+```
+
+Run the app locally:
+
+```
+npm run dev
+```
+
+# Demos
+
+
+# Limitations
+
+* No database - it's all stateless
+* Gemini output depends heavily on form quality
+* Not a substitute for real medical evaluation
+
+# Future Upgrades
+
+* Add image-based height/weight input
+* Save past assessments via login
+* Link to medical databases / WHO child growth standards
+* Multilingual support for broader reach
+
+# License & Atrribution
+
+* MIT License
+* AI via Gemini API
+* Canva

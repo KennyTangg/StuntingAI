@@ -47,15 +47,15 @@ export default function Features() {
       icon: <DataIcon />,
       title: "Data Collection",
       description: "Easily input growth measurements and health data through our intuitive interface.",
-      items: ["Height and weight tracking", "Preliminary evaluation", "Medical history integration", "User-friendly forms"],
+      items: ["Height and weight tracking", "Preliminary evaluation", "User-friendly forms"],
       category: "core",
       color: "blue"
     },
     {
       icon: <AIIcon />,
       title: "AI Analysis",
-      description: "Our advanced algorithms analyze growth patterns to identify potential stunting risks and development concerns.",
-      items: ["Pattern recognition", "Risk assessment", "Growth trajectory prediction", "Comparative analysis"],
+      description: "Our advanced algorithms analyze patterns to identify potential stunting development concerns.",
+      items: ["Risk assessment", "Growth trajectory prediction", "Comparative analysis"],
       category: "core",
       color: "blue"
     },
@@ -63,7 +63,7 @@ export default function Features() {
       icon: <PlanIcon />,
       title: "Intervention Plans",
       description: "Receive customized recommendations and intervention strategies based on individual needs and risk factors.",
-      items: ["Nutrition guidance", "Healthcare recommendations", "Progress monitoring tools", "Adjustable intervention paths"],
+      items: ["Nutrition guidance", "Healthcare recommendations"],
       category: "core",
       color: "blue"
     }
@@ -159,8 +159,8 @@ export default function Features() {
           </div>
           <h1 className="text-5xl font-bold text-white mt-6 mb-4">Powerful Features</h1>
           <p className=" text-xl text-blue-100 text-center w-full">
-            StuntingAI provides comprehensive tools for healthcare professionals to monitor,
-            analyze, and address childhood growth concerns with precision and care.
+            StuntingAI provides simple tools for for
+            analyzing and address childhood growth concerns with precision and care.
           </p>
         </div>
       </div>
