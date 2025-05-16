@@ -40,6 +40,50 @@
   color: #888;
 }
 
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
 
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-pulse-blue {
+  animation: pulse 2s infinite;
+}
+
+/* Form focus styles */
+.form-input-focus {
+  @apply focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200;
+}
+
+/* Hover effects */
+.hover-scale {
+  @apply transition-transform duration-300 transform hover:scale-105;
+}
+
+/* Card styles */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
 
