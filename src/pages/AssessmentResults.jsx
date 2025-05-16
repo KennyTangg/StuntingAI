@@ -510,6 +510,36 @@ export default function AssessmentResults() {
               </div>
             </div>
           </div>
+          {/* AI Nutrition Analysis Card */}
+          <div className="bg-white rounded-xl shadow-lg p-7 mb-10 fade-in-delay-2 card border border-blue-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 mr-3 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              AI Nutrition Analysis
+            </h2>
+            <div className="flex flex-col items-center justify-center py-6 px-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-100">
+              <div className="mb-6 w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg transform transition-transform duration-500 hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">Personalized Nutrition Recommendations</h3>
+              <p className="text-gray-600 text-center mb-6 max-w-md">
+                Get AI-powered nutrition suggestions and meal recommendations tailored specifically for {childData.name}'s growth needs.
+              </p>
+              <button
+                onClick={() => navigate('/nutrition-analysis', { state: { childData } })}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                </svg>
+                Get Nutrition Analysis
+              </button>
+            </div>
+          </div>
+
           {/* Daily Meal Schedule and Key Foods */}
           <div className="bg-white rounded-xl shadow-lg p-7 mb-10 fade-in-delay-2 card border border-blue-100 hover:shadow-xl transition-all duration-300">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">

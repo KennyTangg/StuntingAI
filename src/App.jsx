@@ -6,6 +6,7 @@ import Features from './pages/Features';
 import Contact from './pages/Contact';
 import GetStarted from './pages/GetStarted';
 import AssessmentResults from './pages/AssessmentResults';
+import NutritionAnalysis from './pages/NutritionAnalysis';
 import './App.css';
 
 export default function App() {
@@ -39,6 +40,10 @@ export default function App() {
     {
       path: "/assessment-results",
       element: <AssessmentResults />
+    },
+    {
+      path: "/nutrition-analysis",
+      element: <NutritionAnalysis />
     }
   ]);
 
