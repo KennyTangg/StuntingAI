@@ -117,7 +117,7 @@ export default function Home() {
     ];
 
     return (
-      <div className="relative h-[400px] overflow-hidden rounded-xl shadow-xl">
+      <div className="text-left relative h-[400px] overflow-hidden rounded-xl shadow-xl">
         <div className="flex h-full w-full transition-transform duration-500 ease-in-out"
              style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
           {slides.map((slide) => (
