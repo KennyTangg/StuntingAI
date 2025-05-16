@@ -125,22 +125,22 @@ export default function Home() {
     ];
 
     return (
-      <div className="relative h-[400px] overflow-hidden rounded-xl shadow-xl">
+      <div className="relative h-[300px] sm:h-[350px] md:h-[400px] overflow-hidden rounded-xl shadow-xl">
         <div className="flex h-full w-full transition-transform duration-500 ease-in-out"
              style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
           {slides.map((slide) => (
-            <div key={slide.id} className="min-w-full h-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-800 to-slate-900">
-              <div className="card p-6 rounded-xl w-full max-w-md">
-                <div className="flex items-center mb-4">
-                  <div className={`h-16 w-16 rounded-full ${slide.bgColor} flex items-center justify-center mr-4`}>
+            <div key={slide.id} className="min-w-full h-full flex flex-col items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-slate-800 to-slate-900">
+              <div className="card p-4 sm:p-6 rounded-xl w-full max-w-md">
+                <div className="flex flex-col sm:flex-row items-center mb-4">
+                  <div className={`h-12 w-12 sm:h-16 sm:w-16 rounded-full ${slide.bgColor} flex items-center justify-center mb-3 sm:mb-0 sm:mr-4`}>
                     {slide.icon}
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold">{slide.title}</h3>
-                    <p className="text-slate-300">{slide.description}</p>
+                  <div className="text-center sm:text-left">
+                    <h3 className="text-base sm:text-lg font-semibold">{slide.title}</h3>
+                    <p className="text-slate-300 text-sm sm:text-base">{slide.description}</p>
                   </div>
                 </div>
-                <div className="bg-slate-700/50 h-40 rounded-lg overflow-hidden flex items-center justify-center">
+                <div className="bg-slate-700/50 h-32 sm:h-40 rounded-lg overflow-hidden flex items-center justify-center">
                   {slide.chart}
                 </div>
               </div>
@@ -149,27 +149,29 @@ export default function Home() {
         </div>
 
         {/* Carousel Controls */}
-        <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+        <div className="absolute bottom-2 sm:bottom-4 left-0 right-0 flex justify-center space-x-2">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition ${currentSlide === index ? 'bg-white' : 'bg-white opacity-50 hover:opacity-75'}`}
+              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition ${currentSlide === index ? 'bg-white' : 'bg-white opacity-50 hover:opacity-75'}`}
             />
           ))}
         </div>
 
         {/* Carousel Navigation Arrows */}
-        <div className="absolute inset-0 flex items-center justify-between p-4">
+        <div className="absolute inset-0 flex items-center justify-between p-2 sm:p-4">
           <button
             onClick={goToPrevSlide}
             className="p-1 rounded-full bg-black/30 text-white hover:bg-black/50 focus:outline-none"
+            aria-label="Previous slide"
           >
             <PrevIcon />
           </button>
           <button
             onClick={goToNextSlide}
             className="p-1 rounded-full bg-black/30 text-white hover:bg-black/50 focus:outline-none"
+            aria-label="Next slide"
           >
             <NextIcon />
           </button>
@@ -181,113 +183,113 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <div className="bg-[#0a1122] py-20">
+      <div className="bg-[#0a1122] py-12 sm:py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between">
-          <div className="md:w-1/2 mb-12 md:mb-0 text-left">
-            <h1 className="text-5xl font-bold mb-6 leading-tight">
+          <div className="w-full md:w-1/2 mb-10 md:mb-0 text-center md:text-left">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
               Monitor and Prevent<br />
               <span className="text-blue-500">Child Stunting</span><br />
               with AI Technology
             </h1>
-            <p className="text-slate-300 mb-8 max-w-lg">
+            <p className="text-slate-300 mb-6 sm:mb-8 max-w-lg mx-auto md:mx-0">
               Our advanced AI platform helps healthcare providers identify,
               track, and prevent stunting in children through early detection
               and personalized intervention plans.
             </p>
             <button
               onClick={() => navigate('/get-started')}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 sm:py-3 px-6 sm:px-8 rounded-lg w-full sm:w-auto"
             >
               Get Started
             </button>
           </div>
 
-          <div className="md:w-1/2 relative">
+          <div className="w-full md:w-1/2 relative mt-6 md:mt-0">
             <Carousel />
           </div>
         </div>
       </div>
 
       {/* Features Section */}
-      <div className="py-20">
+      <div className="py-12 sm:py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">How StuntingAI Works</h2>
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">How StuntingAI Works</h2>
+            <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto">
               Our platform combines advanced AI algorithms with healthcare expertise to provide
               comprehensive growth monitoring solutions.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-[#111827]/70 rounded-xl p-6 shadow-lg border border-slate-700/50 hover:border-blue-500/30 transition-all text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+            <div className="bg-[#111827]/70 rounded-xl p-5 sm:p-6 shadow-lg border border-slate-700/50 hover:border-blue-500/30 transition-all text-left">
               <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
                 <DataIcon />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Data Collection</h3>
-              <p className="text-slate-300 mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">Data Collection</h3>
+              <p className="text-slate-300 mb-4 text-sm sm:text-base">
                 Easily input growth measurements and health data through our intuitive interface.
               </p>
               <ul className="space-y-2">
                 <li className="flex items-center">
-                  <svg className="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-slate-300">Height and weight analysis</span>
+                  <span className="text-slate-300 text-sm sm:text-base">Height and weight analysis</span>
                 </li>
                 <li className="flex items-center">
-                  <svg className="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-slate-300">Preliminary evaluation</span>
+                  <span className="text-slate-300 text-sm sm:text-base">Preliminary evaluation</span>
                 </li>
               </ul>
             </div>
 
-            <div className="bg-[#111827]/70 rounded-xl p-6 shadow-lg border border-slate-700/50 hover:border-blue-500/30 transition-all text-left">
+            <div className="bg-[#111827]/70 rounded-xl p-5 sm:p-6 shadow-lg border border-slate-700/50 hover:border-blue-500/30 transition-all text-left">
               <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
                 <AIIcon />
               </div>
-              <h3 className="text-xl font-semibold mb-2">AI Analysis</h3>
-              <p className="text-slate-300 mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Analysis</h3>
+              <p className="text-slate-300 mb-4 text-sm sm:text-base">
                 Our advanced algorithms analyze growth patterns to identify potential stunting risks and development concerns.
               </p>
               <ul className="space-y-2">
                 <li className="flex items-center">
-                  <svg className="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-slate-300">Pattern recognition</span>
+                  <span className="text-slate-300 text-sm sm:text-base">Pattern recognition</span>
                 </li>
                 <li className="flex items-center">
-                  <svg className="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-slate-300">Growth trajectory prediction</span>
+                  <span className="text-slate-300 text-sm sm:text-base">Growth trajectory prediction</span>
                 </li>
               </ul>
             </div>
 
-            <div className="bg-[#111827]/70 rounded-xl p-6 shadow-lg border border-slate-700/50 hover:border-blue-500/30 transition-all text-left">
+            <div className="bg-[#111827]/70 rounded-xl p-5 sm:p-6 shadow-lg border border-slate-700/50 hover:border-blue-500/30 transition-all text-left sm:col-span-2 md:col-span-1">
               <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
                 <PlanIcon />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Intervention Plans</h3>
-              <p className="text-slate-300 mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">Intervention Plans</h3>
+              <p className="text-slate-300 mb-4 text-sm sm:text-base">
                 Receive customized recommendations and intervention strategies based on individual needs and risk factors.
               </p>
               <ul className="space-y-2">
                 <li className="flex items-center">
-                  <svg className="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-slate-300">Nutrition guidance</span>
+                  <span className="text-slate-300 text-sm sm:text-base">Nutrition guidance</span>
                 </li>
                 <li className="flex items-center">
-                  <svg className="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-slate-300">Healthcare recommendations</span>
+                  <span className="text-slate-300 text-sm sm:text-base">Healthcare recommendations</span>
                 </li>
               </ul>
             </div>
@@ -296,16 +298,16 @@ export default function Home() {
       </div>
 
       {/* Call to Action Section */}
-      <div className="bg-blue-900 py-16 w-screen self-center">
+      <div className="bg-blue-900 py-10 sm:py-12 md:py-16 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold mb-4">Ready to Make a Difference?</h2>
-          <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">Ready to Make a Difference?</h2>
+          <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-6 sm:mb-8">
             Join healthcare providers worldwide who are using StuntingAI to improve child health
             outcomes and prevent stunting.
           </p>
           <button
             onClick={() => navigate('/get-started')}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 sm:py-3 px-6 sm:px-8 rounded-lg w-full sm:w-auto"
           >
             Get Started Today
           </button>
