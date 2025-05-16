@@ -292,10 +292,9 @@ export default function Home() {
       {/* Call to Action Section */}
       <div className="bg-blue-900 py-10 sm:py-12 md:py-16 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">Ready to Make a Difference?</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">Ready to try Stunting AI?</h2>
           <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-6 sm:mb-8">
-            Join healthcare providers worldwide who are using StuntingAI to improve child health
-            outcomes and prevent stunting.
+            Try out StuntingAI for early stage stunting detection and personalized intervention plans.
           </p>
           <button
             onClick={() => navigate('/get-started')}

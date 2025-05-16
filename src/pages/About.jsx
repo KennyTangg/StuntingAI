@@ -32,25 +32,25 @@ export default function About() {
       name: "Kenny Tang",
       role: "Full stack and lead developer",
       image: "https://avatars.githubusercontent.com/u/176812628?v=4",
-      bio: "Pediatrician with 15 years of experience in child growth and development."
+      bio: "Technology enthusiast"
     },
     {
       name: "William Rusmana",
       role: "Front end developer",
       image: "https://avatars.githubusercontent.com/u/93782439?v=4",
-      bio: "Expert in machine learning with a focus on healthcare applications."
+      bio: "Aspiring computer science student"
     },
     {
       name: "Michael",
       role: "Designer",
       image: "https://avatars.githubusercontent.com/u/181051398?v=4",
-      bio: "Full-stack developer specializing in healthcare technology solutions."
+      bio: "Passionate about design and user experience."
     },
     {
       name: "Tiffany",
       role: "Back end developer",
       image: "https://avatars.githubusercontent.com/u/61628016?v=4",
-      bio: "Expert in pediatric nutrition and growth interventions."
+      bio: "Loves coding and solving complex problems."
     }
   ];
 
