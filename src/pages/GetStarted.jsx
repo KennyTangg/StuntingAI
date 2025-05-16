@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../components/icons/Logo';
 
@@ -9,8 +9,19 @@ export default function GetStarted() {
   const [fileName, setFileName] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [selectedGender, setSelectedGender] = useState('');
+  const [formReady, setFormReady] = useState(false);
   const fileInputRef = useRef(null);
   const formRef = useRef(null);
+
+  // Add animation effect when component mounts
+  useEffect(() => {
+    // Small delay to trigger animation after component mounts
+    const timer = setTimeout(() => {
+      setFormReady(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -115,47 +126,93 @@ export default function GetStarted() {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center p-3 bg-gradient-to-br from-[#0a1122] to-[#1a2342]">
-      <div className="bg-white/95 backdrop-blur-sm w-full max-w-xl p-4 rounded-xl shadow-xl border border-blue-100/20 relative">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-[#0a1122] to-[#1a2342] py-10">
+      <div className="bg-white/95 backdrop-blur-sm w-full max-w-xl p-6 sm:p-8 rounded-2xl shadow-2xl border border-blue-200/30 relative overflow-hidden transition-all duration-300 hover:shadow-blue-500/10">
+        {/* Decorative elements */}
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl"></div>
+
         {/* Back Button - Positioned at top left corner of the card */}
         <button
           onClick={() => navigate('/')}
-          className="absolute left-3 top-3 flex items-center text-blue-500 hover:text-blue-600 transition-colors bg-white/80 backdrop-blur-sm py-1 px-2 rounded-lg shadow-sm"
+          className="absolute left-4 top-4 flex items-center text-blue-600 hover:text-blue-700 transition-all duration-300 bg-white/90 backdrop-blur-sm py-1.5 px-3 rounded-lg shadow-sm hover:shadow-md transform hover:scale-105"
         >
-          <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
           <span className="font-medium text-sm">Back</span>
         </button>
 
-        <div className="mb-3 text-center">
-          <div className="w-12 h-12 border-blue-500 border-2 rounded-full mx-auto mb-2 flex items-center justify-center">
+        <div className={`mb-6 text-center relative z-10 transition-all duration-700 ${formReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <div className="w-16 h-16 border-blue-500 border-2 rounded-full mx-auto mb-3 flex items-center justify-center bg-blue-50 shadow-md transform transition-transform duration-500 hover:scale-110 hover:shadow-lg">
             <Logo />
           </div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-1">Get Started</h1>
-          <p className="text-sm text-gray-600">Please provide your child's information</p>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 inline-block text-transparent bg-clip-text">Get Started</h1>
+          <p className="text-gray-600">Please provide your child's information for assessment</p>
         </div>
 
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-3">
+        {/* Progress Steps */}
+        <div className={`mb-6 relative z-10 transition-all duration-700 ${formReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <div className="flex justify-between items-center">
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-md animate-pulse-blue">
+                <span className="text-sm font-bold">1</span>
+              </div>
+              <span className="text-xs mt-1 text-blue-600 font-medium">Info</span>
+            </div>
+            <div className="flex-1 h-1 mx-2 bg-gray-200 rounded overflow-hidden">
+              <div className="h-full w-0 bg-blue-500 rounded transition-all duration-1000"></div>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center transition-all duration-300 hover:bg-gray-300">
+                <span className="text-sm font-bold">2</span>
+              </div>
+              <span className="text-xs mt-1 text-gray-500">Results</span>
+            </div>
+          </div>
+        </div>
+
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          className={`space-y-4 relative z-10 transition-all duration-700 ${formReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+        >
           {/* Name Field */}
-          <div className="mb-2">
-            <label htmlFor="name" className="block text-xs font-medium text-gray-700 mb-1">Child's Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="Enter child's name"
-              className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-all text-sm text-black placeholder-gray-400"
-              required
-            />
+          <div className="mb-3 group">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1.5 transition-all group-focus-within:text-blue-600">
+              <span className="flex items-center">
+                <svg className="w-4 h-4 mr-1.5 text-gray-500 group-focus-within:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Child's Name
+              </span>
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Enter child's name"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm text-black placeholder-gray-400 shadow-sm"
+                required
+              />
+              <div className="absolute inset-0 rounded-xl pointer-events-none transition-opacity opacity-0 group-focus-within:opacity-100 border border-blue-500 shadow-sm"></div>
+            </div>
           </div>
 
           {/* Age and Gender in one row */}
-          <div className="grid grid-cols-2 gap-3 mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
             {/* Age Field */}
-            <div>
-              <label htmlFor="age" className="block text-xs font-medium text-gray-700 mb-1">Age</label>
-              <div className="flex gap-2">
+            <div className="group">
+              <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1.5 transition-all group-focus-within:text-blue-600">
+                <span className="flex items-center">
+                  <svg className="w-4 h-4 mr-1.5 text-gray-500 group-focus-within:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Age
+                </span>
+              </label>
+              <div className="flex gap-3">
                 <div className="w-1/2">
                   <div className="relative">
                     <input
@@ -165,10 +222,10 @@ export default function GetStarted() {
                       placeholder="0"
                       min="0"
                       max="5"
-                      className="w-full px-2 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-all text-sm text-black placeholder-gray-400"
+                      className="w-full px-3 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm text-black placeholder-gray-400 shadow-sm"
                       required
                     />
-                    <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">Yrs</span>
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs font-medium">Years</span>
                   </div>
                 </div>
                 <div className="w-1/2">
@@ -180,10 +237,10 @@ export default function GetStarted() {
                       placeholder="0"
                       min="0"
                       max="11"
-                      className="w-full px-2 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-all text-sm text-black placeholder-gray-400"
+                      className="w-full px-3 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm text-black placeholder-gray-400 shadow-sm"
                       required
                     />
-                    <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">Mo</span>
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs font-medium">Months</span>
                   </div>
                 </div>
               </div>
@@ -191,51 +248,71 @@ export default function GetStarted() {
 
             {/* Gender Field */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Gender</label>
-              <div className="flex gap-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <span className="flex items-center">
+                  <svg className="w-4 h-4 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                  Gender
+                </span>
+              </label>
+              <div className="flex gap-3">
                 <label
-                  className={`flex-1 flex items-center justify-center py-2.5 border rounded-lg cursor-pointer transition-colors ${
+                  className={`flex-1 flex items-center justify-center py-3 border rounded-xl cursor-pointer transition-all duration-300 ${
                     selectedGender === 'M'
-                      ? 'bg-blue-50 border-blue-500 shadow-sm'
-                      : 'border-gray-300 hover:bg-blue-50 hover:border-blue-400'
+                      ? 'bg-blue-50 border-blue-500 shadow-md transform scale-105'
+                      : 'border-gray-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-sm'
                   }`}
                 >
                   <input
                     type="radio"
                     name="gender"
                     value="M"
-                    className="mr-1 w-3 h-3 text-blue-500 focus:ring-blue-500"
+                    className="sr-only"
                     required
                     onChange={handleGenderChange}
                     checked={selectedGender === 'M'}
                   />
-                  <span className="text-sm font-medium text-gray-800">Male</span>
+                  <svg className={`w-5 h-5 mr-2 ${selectedGender === 'M' ? 'text-blue-600' : 'text-gray-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span className={`text-sm font-medium ${selectedGender === 'M' ? 'text-blue-700' : 'text-gray-700'}`}>Male</span>
                 </label>
                 <label
-                  className={`flex-1 flex items-center justify-center py-2.5 border rounded-lg cursor-pointer transition-colors ${
+                  className={`flex-1 flex items-center justify-center py-3 border rounded-xl cursor-pointer transition-all duration-300 ${
                     selectedGender === 'F'
-                      ? 'bg-blue-50 border-blue-500 shadow-sm'
-                      : 'border-gray-300 hover:bg-blue-50 hover:border-blue-400'
+                      ? 'bg-blue-50 border-blue-500 shadow-md transform scale-105'
+                      : 'border-gray-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-sm'
                   }`}
                 >
                   <input
                     type="radio"
                     name="gender"
                     value="F"
-                    className="mr-1 w-3 h-3 text-blue-500 focus:ring-blue-500"
+                    className="sr-only"
                     onChange={handleGenderChange}
                     checked={selectedGender === 'F'}
                   />
-                  <span className="text-sm font-medium text-gray-800">Female</span>
+                  <svg className={`w-5 h-5 mr-2 ${selectedGender === 'F' ? 'text-blue-600' : 'text-gray-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span className={`text-sm font-medium ${selectedGender === 'F' ? 'text-blue-700' : 'text-gray-700'}`}>Female</span>
                 </label>
               </div>
             </div>
           </div>
 
           {/* Height and Weight Fields with improved styling */}
-          <div className="grid grid-cols-2 gap-3 mb-2">
-            <div>
-              <label htmlFor="height" className="block text-xs font-medium text-gray-700 mb-1">Height</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+            <div className="group">
+              <label htmlFor="height" className="block text-sm font-medium text-gray-700 mb-1.5 transition-all group-focus-within:text-blue-600">
+                <span className="flex items-center">
+                  <svg className="w-4 h-4 mr-1.5 text-gray-500 group-focus-within:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                  </svg>
+                  Height
+                </span>
+              </label>
               <div className="relative">
                 <input
                   type="number"
@@ -245,14 +322,21 @@ export default function GetStarted() {
                   min="1"
                   max="300"
                   step="0.1"
-                  className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-all text-sm text-black placeholder-gray-400"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm text-black placeholder-gray-400 shadow-sm"
                   required
                 />
-                <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">cm</span>
+                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs font-medium">cm</span>
               </div>
             </div>
-            <div>
-              <label htmlFor="weight" className="block text-xs font-medium text-gray-700 mb-1">Weight</label>
+            <div className="group">
+              <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-1.5 transition-all group-focus-within:text-blue-600">
+                <span className="flex items-center">
+                  <svg className="w-4 h-4 mr-1.5 text-gray-500 group-focus-within:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                  </svg>
+                  Weight
+                </span>
+              </label>
               <div className="relative">
                 <input
                   type="number"
@@ -262,24 +346,33 @@ export default function GetStarted() {
                   min="1"
                   max="500"
                   step="0.1"
-                  className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-all text-sm text-black placeholder-gray-400"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm text-black placeholder-gray-400 shadow-sm"
                   required
                 />
-                <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs">kg</span>
+                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-xs font-medium">kg</span>
               </div>
             </div>
           </div>
 
-          {/* Photo Upload Field - Compact Version */}
-          <div className="mb-2">
-            <label className="block text-xs font-medium text-gray-700 mb-1">Photo (Optional)</label>
+          {/* Photo Upload Field - Enhanced Version */}
+          <div className="mb-4 group">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <span className="flex items-center">
+                <svg className="w-4 h-4 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Photo (Optional)
+              </span>
+            </label>
             <div
               onClick={() => fileInputRef.current?.click()}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-lg p-3 text-center cursor-pointer transition-all ${
-                photoPreview ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+              className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all duration-300 ${
+                photoPreview
+                  ? 'border-blue-400 bg-blue-50/70 shadow-md'
+                  : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50/70 hover:shadow-md'
               }`}
             >
               <input
@@ -292,29 +385,44 @@ export default function GetStarted() {
 
               {photoPreview ? (
                 <div className="relative">
-                  <img
-                    src={photoPreview}
-                    alt="Preview"
-                    className="mx-auto h-24 object-cover rounded-lg shadow-md"
-                  />
-                  <div className="mt-1 flex flex-col items-center">
-                    <p className="text-xs text-gray-600 truncate max-w-full">{fileName}</p>
+                  <div className="relative mx-auto w-32 h-32 rounded-xl overflow-hidden shadow-lg transition-transform duration-500 transform hover:scale-105 group">
+                    <img
+                      src={photoPreview}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-2">
+                      <p className="text-xs text-white font-medium truncate max-w-[90%]">{fileName}</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex justify-center">
                     <button
                       type="button"
-                      className="mt-1 px-2 py-1 bg-red-100 text-red-600 rounded-full text-xs font-medium hover:bg-red-200 transition-colors"
+                      className="px-3 py-1.5 bg-red-100 text-red-600 rounded-full text-xs font-medium hover:bg-red-200 transition-all duration-300 hover:shadow-md flex items-center"
                       onClick={removePhoto}
                     >
+                      <svg className="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
                       Remove Photo
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="py-3">
-                  <svg className="mx-auto h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <p className="mt-2 text-xs text-gray-500">Click or drag to upload a photo</p>
-                  <p className="text-xs text-gray-400 mt-1">PNG, JPG, GIF up to 5MB</p>
+                <div className="py-6 px-4">
+                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-blue-100 flex items-center justify-center transition-transform duration-500 transform hover:scale-110">
+                    <svg className="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <p className="text-sm text-gray-700 font-medium">Drag and drop a photo here</p>
+                  <p className="text-xs text-gray-500 mt-1">or click to browse files</p>
+                  <p className="text-xs text-gray-400 mt-3 flex items-center justify-center">
+                    <svg className="w-3.5 h-3.5 mr-1 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    PNG, JPG, GIF up to 5MB
+                  </p>
                 </div>
               )}
             </div>
@@ -323,19 +431,27 @@ export default function GetStarted() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium text-sm rounded-lg transition-all transform hover:-translate-y-1 hover:shadow-lg mt-2"
+            className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium text-sm rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 mt-4 flex items-center justify-center"
           >
-            Continue to Assessment
+            <span>Continue to Assessment</span>
+            <svg className="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
           </button>
           </form>
 
           {/* Success Message */}
           {showSuccess && (
-            <div className="mt-3 p-2 bg-green-50 text-green-700 rounded-lg flex items-center">
-              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <span className="text-sm">Information submitted successfully!</span>
+            <div className="mt-4 p-3 bg-green-50 text-green-700 rounded-xl flex items-center border border-green-200 shadow-md animate-fadeIn">
+              <div className="bg-green-100 rounded-full p-1 mr-3">
+                <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <span className="font-medium">Success!</span>
+                <p className="text-sm text-green-600">Information submitted successfully. Redirecting...</p>
+              </div>
             </div>
           )}
       </div>
