@@ -89,13 +89,7 @@ export default function Home() {
         bgColor: "bg-blue-100",
         iconColor: "text-blue-600",
         chart: (
-          <svg className="w-full h-full" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,100 Q80,180 160,100 T320,100 T480,100" stroke="#3b82f6" strokeWidth="4" fill="none"/>
-            <path d="M0,150 Q80,80 160,150 T320,150 T480,150" stroke="#60a5fa" strokeWidth="4" fill="none"/>
-            <circle cx="100" cy="100" r="5" fill="#3b82f6"/>
-            <circle cx="200" cy="120" r="5" fill="#3b82f6"/>
-            <circle cx="300" cy="90" r="5" fill="#3b82f6"/>
-          </svg>
+          <img src="./early detection img.png" alt="Chart preview" className="w-full h-full object-contain" />
         )
       },
       {
@@ -106,19 +100,13 @@ export default function Home() {
         bgColor: "bg-green-100",
         iconColor: "text-green-600",
         chart: (
-          <svg className="w-3/4 h-3/4" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="20" width="30" height="60" rx="2" fill="#4ade80" opacity="0.6"/>
-            <rect x="50" y="40" width="30" height="40" rx="2" fill="#4ade80" opacity="0.7"/>
-            <rect x="90" y="30" width="30" height="50" rx="2" fill="#4ade80" opacity="0.8"/>
-            <rect x="130" y="10" width="30" height="70" rx="2" fill="#4ade80" opacity="0.9"/>
-            <line x1="0" y1="90" x2="180" y2="90" stroke="#94a3b8" strokeWidth="1"/>
-          </svg>
+          <img src="./diet plan img.jpg" alt="Chart preview" className="w-full h-full object-contain" />
         )
       },
       {
         id: 3,
-        title: "Progress Tracking",
-        description: "Monitor growth improvements over time",
+        title: "Growth Projection",
+        description: "Growth projection over time",
         icon: <ProgressTrackingIcon />,
         bgColor: "bg-purple-100",
         iconColor: "text-purple-600",
@@ -245,7 +233,7 @@ export default function Home() {
                   <svg className="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-slate-300">Height and weight tracking</span>
+                  <span className="text-slate-300">Height and weight analysis</span>
                 </li>
                 <li className="flex items-center">
                   <svg className="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
