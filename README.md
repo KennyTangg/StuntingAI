@@ -106,3 +106,9 @@ npm run dev
 * MIT License
 * AI via Gemini API
 * Canva
+### Picture references:
+* Food picture - https://www.pregnancy.com.au/3-easy-baby-food-recipes-you-can-make-at-home/
+* Taller and shorter person - https://cdn.prod.website-files.com/5ee7039040ea6efb80d7521c/5fd999586cf6d03d6bbc39e3_Of-Ages-and-Stages-1400x700.jpg
+* Not stunted baby - https://www.thebump.com/a/baby-milestones
+* Stunted baby - https://www.adelaidenow.com.au/lifestyle/health/generations-of-stunted-babies-tragedy-of-malnourished-children-in-syria-and-around-the-world/news-story/8f1ba403832f82ce42d0956a0c371644
+
