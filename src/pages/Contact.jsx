@@ -172,7 +172,7 @@ export default function Contact() {
                   <div className='text-left'>
                     <h3 className="text-lg font-semibold text-white">Phone</h3>
                     <a href="tel:+15551234567" className="text-slate-300 hover:text-blue-400 transition-colors">
-                      +1 (555) 123-4567
+                      +62 XXXX XXXX 
                     </a>
                   </div>
                 </div>
@@ -184,28 +184,16 @@ export default function Contact() {
                   <div className='text-left'>
                     <h3 className="text-lg font-semibold text-white">Address</h3>
                     <p className="text-slate-300">
-                      123 Health Tech Plaza<br />
-                      Suite 456<br />
-                      San Francisco, CA 94103
+                      Jakarta, Indonesia
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 bg-slate-900/80 w-10 h-10 rounded-lg flex items-center justify-center mr-4">
-                    <ClockIcon />
-                  </div>
-                  <div className='text-left'>
-                    <h3 className="text-lg font-semibold text-white">Office Hours</h3>
-                    <p className="text-slate-300">
-                      Monday - Friday<br />
-                      9:00 AM - 5:00 PM PST
-                    </p>
-                  </div>
                 </div>
               </div>
 
-              <div className="mt-8 pt-8 border-t border-slate-700">
+              <div className="mt-24 pt-8 border-t border-slate-700">
                 <h3 className="text-lg font-semibold text-white mb-4">Connect With Us</h3>
                 <div className="flex space-x-4 justify-center">
                   <a href="#" className="bg-slate-900/80 w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-blue-400 hover:bg-slate-800 transition-colors">
