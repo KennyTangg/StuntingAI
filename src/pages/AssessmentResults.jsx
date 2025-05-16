@@ -668,40 +668,6 @@ export default function AssessmentResults() {
             <div className="flex flex-col md:flex-row gap-10">
               {/* Result Status */}
               <div className="flex-1">
-                <div
-                  className={`${(aiResponse && aiResponse.classification === "Stunted") || isStunted
-                    ? "bg-gradient-to-r from-yellow-50 to-amber-50 border-l-4 border-yellow-500"
-                    : "bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500"}
-                    p-5 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1`}
-                >
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                        (aiResponse && aiResponse.classification === "Stunted") || isStunted
-                          ? "bg-gradient-to-br from-yellow-400 to-amber-500"
-                          : "bg-gradient-to-br from-green-400 to-emerald-500"
-                      }`}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          {(aiResponse && aiResponse.classification === "Stunted") || isStunted ? (
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                          ) : (
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                          )}
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="ml-4">
-                      <h3 className={`text-xl font-bold ${(aiResponse && aiResponse.classification === "Stunted") || isStunted ? "text-amber-800" : "text-emerald-800"}`}>
-                        {(aiResponse && aiResponse.classification === "Stunted") || isStunted ? "Stunting Detected" : "Normal Growth Detected"}
-                      </h3>
-                      <p className={`mt-1 ${(aiResponse && aiResponse.classification === "Stunted") || isStunted ? "text-amber-700" : "text-emerald-700"}`}>
-                        {(aiResponse && aiResponse.classification === "Stunted") || isStunted
-                          ? "Your child's height-for-age is below the recommended range for their age group."
-                          : "Your child's height-for-age is within the normal range for their age group."}
-                      </p>
-                    </div>
-                  </div>
-                </div>
 
                 <div className="mt-8 bg-indigo-50 p-5 rounded-lg shadow-md">
                   <h4 className="font-semibold text-indigo-800 mb-4 flex items-center">
