@@ -193,7 +193,6 @@ export default function AssessmentResults() {
             }),
           });
 
-
         const data = await response.json();
         const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!rawText) return [];
