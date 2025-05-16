@@ -89,7 +89,7 @@ export default function Home() {
         bgColor: "bg-blue-100",
         iconColor: "text-blue-600",
         chart: (
-          <img src="./early detection img.png" alt="Chart preview" className="w-full h-full object-contain" />
+          <img src="./early detection img.png" alt="Chart preview" className="w-full h-full object-cover" />
         )
       },
       {
@@ -100,7 +100,7 @@ export default function Home() {
         bgColor: "bg-green-100",
         iconColor: "text-green-600",
         chart: (
-          <img src="./diet plan img.jpg" alt="Chart preview" className="w-full h-full object-contain" />
+          <img src="./diet plan img.jpg" alt="Chart preview" className="w-full h-full object-cover" />
         )
       },
       {
@@ -111,15 +111,7 @@ export default function Home() {
         bgColor: "bg-purple-100",
         iconColor: "text-purple-600",
         chart: (
-          <svg className="w-full h-full" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50,150 L100,100 L150,120 L200,80 L250,90 L300,60 L350,40" stroke="#a855f7" strokeWidth="3" fill="none"/>
-            <circle cx="100" cy="100" r="4" fill="#a855f7"/>
-            <circle cx="150" cy="120" r="4" fill="#a855f7"/>
-            <circle cx="200" cy="80" r="4" fill="#a855f7"/>
-            <circle cx="250" cy="90" r="4" fill="#a855f7"/>
-            <circle cx="300" cy="60" r="4" fill="#a855f7"/>
-            <circle cx="350" cy="40" r="4" fill="#a855f7"/>
-          </svg>
+          <img src="./growth projection img.jpg" alt="Chart preview" className="w-full h-full object-cover" />
         )
       }
     ];
@@ -309,7 +301,7 @@ export default function Home() {
             onClick={() => navigate('/get-started')}
             className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 sm:py-3 px-6 sm:px-8 rounded-lg w-full sm:w-auto"
           >
-            Get Started Today
+            Get Started Now
           </button>
         </div>
       </div>

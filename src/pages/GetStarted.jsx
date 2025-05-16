@@ -131,7 +131,6 @@ export default function GetStarted() {
         {/* Decorative elements */}
         <div className="absolute -top-24 -right-24 w-36 sm:w-48 h-36 sm:h-48 bg-blue-500/10 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-24 -left-24 w-36 sm:w-48 h-36 sm:h-48 bg-indigo-500/10 rounded-full blur-3xl"></div>
-
         {/* Back Button - Positioned at top left corner of the card */}
         <button
           onClick={() => navigate('/')}
