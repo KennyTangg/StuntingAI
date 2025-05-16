@@ -68,7 +68,25 @@ npm run dev
 ```
 
 # Demos
-
+<table>
+  <tr>
+    <th>
+      <source media="(prefers-color-scheme: dark)" srcset="documentation/Image1_HomeScreen.jpg">
+      <source media="(prefers-color-scheme: light)" srcset="documentation/Image1_HomeScreen.jpg">
+      <img src="documentation/Image1_HomeScreen.jpg"> 
+    </th>
+    <th>
+      <source media="(prefers-color-scheme: dark)" srcset="documentation/Image2_Form.jpg">
+      <source media="(prefers-color-scheme: light)" srcset="documentation/Image2_Form.jpg">
+      <img src="documentation/Image2_Form.jpg"> 
+    </th>
+    <th>
+      <source media="(prefers-color-scheme: dark)" srcset="documentation/Image3_Results.jpg">
+      <source media="(prefers-color-scheme: light)" srcset="documentation/Image3_Results.jpg">
+      <img src="documentation/Image3_Results.jpg"> 
+    </th>
+  </tr>
+</table>
 
 # Limitations
 
