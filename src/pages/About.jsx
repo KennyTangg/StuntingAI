@@ -146,8 +146,8 @@ export default function About() {
             <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8">
               <h2 className="text-3xl font-bold text-white mb-4">Our Mission</h2>
               <p className="text-slate-300 text-lg">
-                Our mission is to leverage artificial intelligence and data analytics to cure and alliviate
-                stunting in children worldwide, especially in our home country where apporximately 1 in 5 children are stunted.
+                Our mission is to leverage artificial intelligence and data analytics to cure and alleviate
+                stunting in children worldwide, especially in our home country, Indonesia where approximately 1 in 5 children are stunted.
               </p>
               <p className="text-slate-300 text-lg mt-4">
                 We believe that early detection and intervention are key to preventing stunting and
