@@ -109,117 +109,133 @@ export default function NutritionAnalysis() {
   const nutritionDataFromAI = async (childData) => {
     const GEMINI_API_KEY = "AIzaSyDHAtxtF6mHlOq6GgkbKrr1iCusz42WdLE";
     const prompt = `
-    You are a pediatric nutritionist AI specialized in creating personalized nutrition plans for children. Your task is to analyze a child's data and provide comprehensive nutrition recommendations to support healthy growth and development.
+        You are a pediatric nutritionist AI specialized in creating personalized nutrition plans for children. Your task is to analyze a child's data and provide comprehensive nutrition recommendations to support healthy growth and development.
 
     You will receive metadata in JSON format containing the child's name, gender, age, height, weight, BMI, and growth percentile. Use this information to create a personalized nutrition plan.
 
     **Instructions:**
     1. Analyze the child's data to determine their nutritional needs.
     2. Return a comprehensive nutrition analysis in JSON format with the following sections:
-       - dailyCalories: Estimated daily calorie needs (as a number)
-       - macronutrients: Object with protein, carbs, and fats percentages and gram amounts
-       - keyNutrients: Array of important nutrients with name, daily amount, and food sources
-       - mealPlan: Array of meal suggestions organized by meal time
-       - recommendations: Array of specific nutrition recommendations
+      - dailyCalories: Estimated daily calorie needs (as a number)
+      - macronutrients: Object with protein, carbs, and fats percentages and gram amounts
+      - keyNutrients: Array of important nutrients with name, daily amount, and food sources
+      - mealPlan: Array of meal suggestions organized by meal time
+      - recommendations: Array of specific nutrition recommendations
+      - growthTrajectory: Object with the following:
+        - currentStatus: Evaluation based on BMI and growth percentile
+        - projection: Short-term growth outlook and key considerations
+        - recommendation: Advice to support healthy growth
+        - estimatedAdultSize: Object with estimated adult height and weight ranges (based on current percentile and growth trends)
 
     3. Output must be returned **exclusively in JSON format**. Do not include any additional commentary or disclaimers.
 
     ---
 
     **Example Input JSON:**
-    {
-      "name": "John",
-      "age": "4 years, 2 months",
-      "gender": "Male",
-      "height": "102 cm",
-      "weight": "16.5 kg",
-      "bmi": "15.9",
-      "percentile": "45th"
-    }
 
-    **Expected Output JSON Format:**
-    {
-      "dailyCalories": 1350,
-      "macronutrients": {
-        "protein": { "percentage": 25, "grams": 84 },
-        "carbs": { "percentage": 50, "grams": 169 },
-        "fats": { "percentage": 25, "grams": 38 }
+      {
+        "name": "John",
+        "age": "4 years, 2 months",
+        "gender": "Male",
+        "height": "102 cm",
+        "weight": "16.5 kg",
+        "bmi": "15.9",
+        "percentile": "45th"
+      }
+
+      **Expected Output JSON Format:**
+      {
+    "dailyCalories": 1350,
+    "macronutrients": {
+      "protein": { "percentage": 25, "grams": 84 },
+      "carbs": { "percentage": 50, "grams": 169 },
+      "fats": { "percentage": 25, "grams": 38 }
+    },
+    "keyNutrients": [
+      {
+        "name": "Calcium",
+        "amount": "800-1000mg",
+        "foods": ["Milk", "Yogurt", "Cheese", "Fortified plant milk", "Leafy greens"]
       },
-      "keyNutrients": [
-        {
-          "name": "Calcium",
-          "amount": "800-1000mg",
-          "foods": ["Milk", "Yogurt", "Cheese", "Fortified plant milk", "Leafy greens"]
-        },
-        {
-          "name": "Iron",
-          "amount": "8-10mg",
-          "foods": ["Lean meat", "Beans", "Fortified cereals", "Spinach", "Lentils"]
-        },
-        {
-          "name": "Vitamin D",
-          "amount": "600-800 IU",
-          "foods": ["Fatty fish", "Egg yolks", "Fortified milk", "Mushrooms"]
-        },
-        {
-          "name": "Zinc",
-          "amount": "5-8mg",
-          "foods": ["Meat", "Shellfish", "Legumes", "Seeds", "Nuts"]
-        }
-      ],
-      "mealPlan": [
-        {
-          "meal": "Breakfast",
-          "options": [
-            "Whole grain cereal with milk and sliced banana",
-            "Scrambled eggs with spinach and whole grain toast",
-            "Greek yogurt with berries and granola"
-          ]
-        },
-        {
-          "meal": "Morning Snack",
-          "options": [
-            "Apple slices with almond butter",
-            "Cheese stick with whole grain crackers",
-            "Small yogurt with berries"
-          ]
-        },
-        {
-          "meal": "Lunch",
-          "options": [
-            "Grilled chicken with brown rice and steamed broccoli",
-            "Turkey and cheese sandwich on whole grain bread with carrot sticks",
-            "Lentil soup with whole grain roll and side salad"
-          ]
-        },
-        {
-          "meal": "Afternoon Snack",
-          "options": [
-            "Hummus with vegetable sticks",
-            "Trail mix with nuts and dried fruits",
-            "Smoothie with yogurt, fruit, and spinach"
-          ]
-        },
-        {
-          "meal": "Dinner",
-          "options": [
-            "Baked salmon with quinoa and roasted vegetables",
-            "Lean beef stir-fry with vegetables and brown rice",
-            "Bean and vegetable pasta with side salad"
-          ]
-        }
-      ],
-      "recommendations": [
-        "Ensure regular meal times to establish healthy eating patterns",
-        "Include a variety of colorful fruits and vegetables daily",
-        "Limit processed foods and added sugars",
-        "Encourage adequate hydration throughout the day",
-        "Focus on nutrient-dense foods to support growth and development",
-        "Include calcium-rich foods for bone development",
-        "Ensure adequate protein intake for muscle growth",
-        "Include iron-rich foods to prevent anemia"
-      ]
+      {
+        "name": "Iron",
+        "amount": "8-10mg",
+        "foods": ["Lean meat", "Beans", "Fortified cereals", "Spinach", "Lentils"]
+      },
+      {
+        "name": "Vitamin D",
+        "amount": "600-800 IU",
+        "foods": ["Fatty fish", "Egg yolks", "Fortified milk", "Mushrooms"]
+      },
+      {
+        "name": "Zinc",
+        "amount": "5-8mg",
+        "foods": ["Meat", "Shellfish", "Legumes", "Seeds", "Nuts"]
+      }
+    ],
+    "mealPlan": [
+      {
+        "meal": "Breakfast",
+        "options": [
+          "Whole grain cereal with milk and sliced banana",
+          "Scrambled eggs with spinach and whole grain toast",
+          "Greek yogurt with berries and granola"
+        ]
+      },
+      {
+        "meal": "Morning Snack",
+        "options": [
+          "Apple slices with almond butter",
+          "Cheese stick with whole grain crackers",
+          "Small yogurt with berries"
+        ]
+      },
+      {
+        "meal": "Lunch",
+        "options": [
+          "Grilled chicken with brown rice and steamed broccoli",
+          "Turkey and cheese sandwich on whole grain bread with carrot sticks",
+          "Lentil soup with whole grain roll and side salad"
+        ]
+      },
+      {
+        "meal": "Afternoon Snack",
+        "options": [
+          "Hummus with vegetable sticks",
+          "Trail mix with nuts and dried fruits",
+          "Smoothie with yogurt, fruit, and spinach"
+        ]
+      },
+      {
+        "meal": "Dinner",
+        "options": [
+          "Baked salmon with quinoa and roasted vegetables",
+          "Lean beef stir-fry with vegetables and brown rice",
+          "Bean and vegetable pasta with side salad"
+        ]
+      }
+    ],
+    "recommendations": [
+      "Ensure regular meal times to establish healthy eating patterns",
+      "Include a variety of colorful fruits and vegetables daily",
+      "Limit processed foods and added sugars",
+      "Encourage adequate hydration throughout the day",
+      "Focus on nutrient-dense foods to support growth and development",
+      "Include calcium-rich foods for bone development",
+      "Ensure adequate protein intake for muscle growth",
+      "Include iron-rich foods to prevent anemia"
+    ],
+    "growthTrajectory": {
+      "currentStatus": "Growth is within normal range (45th percentile). BMI is appropriate for age.",
+      "projection": "Maintain current growth pattern with balanced nutrition. Monitor height and weight at regular pediatric check-ups.",
+      "recommendation": "Continue providing nutrient-rich meals and adequate physical activity to support steady growth.",
+      "estimatedAdultSize": {
+        "height": "170–175 cm",
+        "weight": "60–68 kg"
+      }
     }
+  }
+
 
     IMPORTANT: only return in JSON or if there is no data just make it null
     `;
@@ -269,7 +285,16 @@ export default function NutritionAnalysis() {
           },
           keyNutrients: parsedData.keyNutrients || [],
           mealPlan: parsedData.mealPlan || [],
-          recommendations: parsedData.recommendations || []
+          recommendations: parsedData.recommendations || [],
+          growthTrajectory: parsedData.growthTrajectory || {
+            currentStatus: "Growth data not available",
+            projection: "Projection data not available",
+            recommendation: "Consult with a healthcare provider for personalized growth recommendations",
+            estimatedAdultSize: {
+              height: "Not available",
+              weight: "Not available"
+            }
+          }
         };
 
         return validatedData;
@@ -444,6 +469,123 @@ export default function NutritionAnalysis() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Growth Trajectory Card */}
+              <div className="bg-white rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-7 card border border-blue-100 hover:shadow-xl transition-all duration-300">
+                <h2 className="text-lg sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-7 sm:w-7 mr-2 sm:mr-3 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Growth Trajectory
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Current Status & Projection */}
+                  <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 sm:p-6 rounded-lg shadow-md">
+                    <div className="mb-4">
+                      <h3 className="font-semibold text-indigo-800 mb-2 text-sm sm:text-base">Current Status</h3>
+                      <p className="text-gray-700 text-xs sm:text-sm bg-white p-3 rounded-md shadow-sm border border-indigo-100">
+                        {nutritionData.growthTrajectory?.currentStatus || "Growth is within normal range. BMI is appropriate for age."}
+                      </p>
+                    </div>
+
+                    <div className="mb-4">
+                      <h3 className="font-semibold text-indigo-800 mb-2 text-sm sm:text-base">Projection</h3>
+                      <p className="text-gray-700 text-xs sm:text-sm bg-white p-3 rounded-md shadow-sm border border-indigo-100">
+                        {nutritionData.growthTrajectory?.projection || "Maintain current growth pattern with balanced nutrition. Monitor height and weight at regular pediatric check-ups."}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h3 className="font-semibold text-indigo-800 mb-2 text-sm sm:text-base">Recommendation</h3>
+                      <p className="text-gray-700 text-xs sm:text-sm bg-white p-3 rounded-md shadow-sm border border-indigo-100">
+                        {nutritionData.growthTrajectory?.recommendation || "Continue providing nutrient-rich meals and adequate physical activity to support steady growth."}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Growth Chart Visualization */}
+                  <div className="bg-white p-4 rounded-lg shadow-md border border-indigo-100">
+                    <h3 className="font-semibold text-indigo-800 mb-3 text-sm sm:text-base text-center">Estimated Adult Size</h3>
+
+                    <div className="flex flex-col items-center justify-center h-full">
+                      <div className="relative w-full max-w-[200px]">
+                        {/* Adult figure silhouette */}
+                        <svg className="w-full h-auto" viewBox="0 0 100 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M50 0C44.5 0 40 4.5 40 10C40 15.5 44.5 20 50 20C55.5 20 60 15.5 60 10C60 4.5 55.5 0 50 0Z" fill="#4F46E5" fillOpacity="0.2"/>
+                          <path d="M65 30H35C35 30 30 70 30 120C30 145 35 170 35 170H45C45 170 45 200 45 220C45 240 50 250 50 250C50 250 55 240 55 220C55 200 55 170 55 170H65C65 170 70 145 70 120C70 70 65 30 65 30Z" fill="#4F46E5" fillOpacity="0.2"/>
+                          <path d="M50 0C44.5 0 40 4.5 40 10C40 15.5 44.5 20 50 20C55.5 20 60 15.5 60 10C60 4.5 55.5 0 50 0Z" stroke="#4F46E5" strokeWidth="1"/>
+                          <path d="M65 30H35C35 30 30 70 30 120C30 145 35 170 35 170H45C45 170 45 200 45 220C45 240 50 250 50 250C50 250 55 240 55 220C55 200 55 170 55 170H65C65 170 70 145 70 120C70 70 65 30 65 30Z" stroke="#4F46E5" strokeWidth="1"/>
+                        </svg>
+
+                        {/* Height indicator */}
+                        <div className="absolute top-0 right-0 h-full w-6 flex flex-col justify-between">
+                          <div className="text-xs text-indigo-800 font-medium">Height</div>
+                          <div className="h-full relative mx-2">
+                            <div className="absolute inset-0 bg-gradient-to-b from-indigo-200 to-indigo-400 rounded-full w-1 mx-auto"></div>
+                          </div>
+                          <div className="text-xs text-indigo-800 font-medium">
+                            {nutritionData.growthTrajectory?.estimatedAdultSize?.height || "170-175 cm"}
+                          </div>
+                        </div>
+
+                        {/* Weight indicator */}
+                        <div className="absolute top-0 left-0 h-full w-6 flex flex-col justify-between">
+                          <div className="text-xs text-indigo-800 font-medium">Weight</div>
+                          <div className="h-full relative mx-2">
+                            <div className="absolute inset-0 bg-gradient-to-b from-blue-200 to-blue-400 rounded-full w-1 mx-auto"></div>
+                          </div>
+                          <div className="text-xs text-indigo-800 font-medium">
+                            {nutritionData.growthTrajectory?.estimatedAdultSize?.weight || "60-68 kg"}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 text-center">
+                        <p className="text-xs text-gray-500">Estimated adult size based on current growth percentile</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Growth Percentile Visualization */}
+                <div className="mt-6 bg-white p-4 rounded-lg shadow-md border border-indigo-100">
+                  <h3 className="font-semibold text-indigo-800 mb-3 text-sm sm:text-base">Current Growth Percentile</h3>
+
+                  <div className="relative h-10 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="absolute inset-0 flex">
+                      <div className="bg-red-400" style={{ width: '3%' }}></div>
+                      <div className="bg-orange-400" style={{ width: '12%' }}></div>
+                      <div className="bg-yellow-400" style={{ width: '35%' }}></div>
+                      <div className="bg-green-400" style={{ width: '35%' }}></div>
+                      <div className="bg-blue-400" style={{ width: '15%' }}></div>
+                    </div>
+
+                    {/* Percentile marker */}
+                    <div
+                      className="absolute top-0 h-full w-4 bg-white border-2 border-indigo-600 rounded-full transform -translate-x-1/2 flex items-center justify-center"
+                      style={{ left: `${parseInt(String(childData.percentile).replace(/[^\d]/g, '')) || 45}%` }}
+                    >
+                      <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
+                    </div>
+
+                    {/* Percentile labels */}
+                    <div className="absolute -bottom-6 left-0 right-0 flex justify-between text-xs text-gray-600">
+                      <span>0</span>
+                      <span>25</span>
+                      <span>50</span>
+                      <span>75</span>
+                      <span>100</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 text-center">
+                    <span className="inline-block px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">
+                      {childData.percentile ? `${childData.percentile}${!childData.percentile.toString().endsWith('th') ? 'th' : ''}` : "45th"} Percentile
+                    </span>
+                  </div>
                 </div>
               </div>
 
