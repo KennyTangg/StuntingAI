@@ -58,9 +58,36 @@ export default function AssessmentResults() {
             return;
           }
 
-          // Check for stored AI response using the same key format
-          const photoHash = parsedChildData.photo ? parsedChildData.photo.substring(0, 50) : 'no-photo';
-          const childKey = `${parsedChildData.name}-${parsedChildData.age}-${parsedChildData.gender}-${parsedChildData.height}-${parsedChildData.weight}-${photoHash}`;
+          // Check for stored AI response using the same consistent key format
+          // Extract name, age, gender, height, weight from parsedChildData
+          const name = parsedChildData.name || '';
+
+          // Parse age string like "4 years, 2 months" or "1 year, 1 month"
+          let ageYears = 0;
+          let ageMonths = 0;
+          const ageMatch = parsedChildData.age?.match(/(\d+) years?, (\d+) months?/);
+          if (ageMatch) {
+            ageYears = parseInt(ageMatch[1], 10) || 0;
+            ageMonths = parseInt(ageMatch[2], 10) || 0;
+          }
+
+          const gender = parsedChildData.gender === 'Male' ? 'M' : 'F';
+
+          // Parse height string like "102 cm"
+          let height = 0;
+          const heightMatch = parsedChildData.height?.match(/(\d+\.?\d*) cm/);
+          if (heightMatch) {
+            height = parseFloat(heightMatch[1]) || 0;
+          }
+
+          // Parse weight string like "16.5 kg"
+          let weight = 0;
+          const weightMatch = parsedChildData.weight?.match(/(\d+\.?\d*) kg/);
+          if (weightMatch) {
+            weight = parseFloat(weightMatch[1]) || 0;
+          }
+
+          const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}`;
           const storedAiResponse = localStorage.getItem(`aiResponse-${childKey}`);
 
           if (storedAiResponse) {
@@ -95,10 +122,9 @@ export default function AssessmentResults() {
               : `Based on ${parsedChildData.name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender.`
           };
 
-          // Store the fallback response
-          let responsePhotoHash = parsedChildData.photo ? parsedChildData.photo.substring(0, 50) : 'no-photo';
-          let responseChildKey = `${parsedChildData.name}-${parsedChildData.age}-${parsedChildData.gender}-${parsedChildData.height}-${parsedChildData.weight}-${responsePhotoHash}`;
-          localStorage.setItem(`aiResponse-${responseChildKey}`, JSON.stringify(fallbackResponse));
+          // Store the fallback response using the same consistent key format
+          // We already have the childKey from above, so we can reuse it
+          localStorage.setItem(`aiResponse-${childKey}`, JSON.stringify(fallbackResponse));
 
           setAiResponse(fallbackResponse);
           setIsAiLoading(false);
@@ -116,9 +142,20 @@ export default function AssessmentResults() {
     // Handle data coming from different sources
     let name, ageYears, ageMonths, gender, height, weight, photo, bmi, percentile;
 
+    // Check if we're returning from the nutrition page - if so, skip AI analysis
+    const fromNutritionPage = location.state.fromNutritionPage === true;
+    if (fromNutritionPage) {
+      console.log("Returning from nutrition page - skipping AI analysis and using stored results");
+      // Set a flag to ensure we use stored results and don't reanalyze
+      window.skipAiAnalysis = true;
+    } else {
+      // Reset the flag if we're not coming from the nutrition page
+      window.skipAiAnalysis = false;
+    }
+
     if (location.state.childInfo) {
-      // Data coming from GetStarted page
-      console.log("Data coming from GetStarted page");
+      // Data coming from GetStarted page or returning from Nutrition page
+      console.log("Data coming from GetStarted page or returning from Nutrition page");
       ({ name, ageYears, ageMonths, gender, height, weight, photo } = location.state.childInfo);
 
       const heightInMeters = height / 100;
@@ -136,11 +173,11 @@ export default function AssessmentResults() {
           // Extract values from stored data
           name = parsedChildData.name;
 
-          // Parse age string like "4 years, 2 months"
-          const ageMatch = parsedChildData.age?.match(/(\d+) years, (\d+) months/);
+          // Parse age string like "4 years, 2 months" or "1 year, 1 month"
+          const ageMatch = parsedChildData.age?.match(/(\d+) years?, (\d+) months?/);
           if (ageMatch) {
-            ageYears = parseInt(ageMatch[1], 10);
-            ageMonths = parseInt(ageMatch[2], 10);
+            ageYears = parseInt(ageMatch[1], 10) || 0;
+            ageMonths = parseInt(ageMatch[2], 10) || 0;
           } else {
             ageYears = 0;
             ageMonths = 0;
@@ -150,11 +187,11 @@ export default function AssessmentResults() {
 
           // Parse height string like "102 cm"
           const heightMatch = parsedChildData.height?.match(/(\d+\.?\d*) cm/);
-          height = heightMatch ? parseFloat(heightMatch[1]) : 0;
+          height = heightMatch ? (parseFloat(heightMatch[1]) || 0) : 0;
 
           // Parse weight string like "16.5 kg"
           const weightMatch = parsedChildData.weight?.match(/(\d+\.?\d*) kg/);
-          weight = weightMatch ? parseFloat(weightMatch[1]) : 0;
+          weight = weightMatch ? (parseFloat(weightMatch[1]) || 0) : 0;
 
           photo = parsedChildData.photo;
           bmi = parsedChildData.bmi;
@@ -184,7 +221,7 @@ export default function AssessmentResults() {
     // Create a completely new childData object without using the initial state
     const newChildData = {
       name: name || "Child",
-      age: `${ageYears} years, ${ageMonths} months`,
+      age: `${ageYears || 0} ${ageYears === 1 ? 'year' : 'years'}, ${ageMonths || 0} ${ageMonths === 1 ? 'month' : 'months'}`,
       gender: gender === 'M' ? 'Male' : 'Female',
       height: `${height} cm`,
       weight: `${weight} kg`,
@@ -199,10 +236,11 @@ export default function AssessmentResults() {
 
     setChildData(newChildData);
 
-    // Check if we already have AI results in localStorage for this child
-    // Include a hash of the photo in the key to ensure we get a new analysis when the photo changes
-    const photoHash = photo ? photo.substring(0, 50) : 'no-photo'; // Use first 50 chars of photo data as a simple hash
-    const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}-${photoHash}`;
+    // Create a consistent key for this child's data
+    // We'll use this key to store and retrieve AI results
+    // We're removing the photo hash from the key to ensure we get consistent results
+    // even if the photo changes slightly (e.g., different compression)
+    const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}`;
     console.log("Looking for AI response with key:", childKey);
     const storedAiResponse = localStorage.getItem(`aiResponse-${childKey}`);
 
@@ -217,25 +255,100 @@ export default function AssessmentResults() {
           setHasError(false); // Clear any previous errors
         } else {
           console.error("Stored AI response is empty or invalid");
-          fetchNewAiResponse();
+          // Only fetch new AI response if we're not returning from nutrition page
+          if (!fromNutritionPage) {
+            fetchNewAiResponse();
+          } else {
+            // If returning from nutrition page, use a basic response based on percentile
+            const fallbackResponse = {
+              classification: isStuntedValue ? "Stunted" : "Not Stunted",
+              explanation: isStuntedValue
+                ? `Based on ${name}'s measurements and growth patterns, there are signs of stunting. The height-for-age is below the expected range for a child of this age and gender.`
+                : `Based on ${name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender.`
+            };
+            setAiResponse(fallbackResponse);
+            setIsAiLoading(false);
+          }
         }
       } catch (error) {
         console.error("Error parsing stored AI response:", error);
-        fetchNewAiResponse();
+        // Only fetch new AI response if we're not returning from nutrition page
+        if (!fromNutritionPage) {
+          fetchNewAiResponse();
+        } else {
+          // If returning from nutrition page, use a basic response based on percentile
+          const fallbackResponse = {
+            classification: isStuntedValue ? "Stunted" : "Not Stunted",
+            explanation: isStuntedValue
+              ? `Based on ${name}'s measurements and growth patterns, there are signs of stunting. The height-for-age is below the expected range for a child of this age and gender.`
+              : `Based on ${name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender.`
+          };
+          setAiResponse(fallbackResponse);
+          setIsAiLoading(false);
+        }
       }
     } else {
-      console.log("No stored AI response found, fetching new one");
-      // Fetch new AI response
-      fetchNewAiResponse();
+      console.log("No stored AI response found");
+      // Only fetch new AI response if we're not returning from nutrition page
+      if (!fromNutritionPage) {
+        console.log("Fetching new AI response");
+        fetchNewAiResponse();
+      } else {
+        console.log("Returning from nutrition page - using basic response");
+        // If returning from nutrition page, use a basic response based on percentile
+        const fallbackResponse = {
+          classification: isStuntedValue ? "Stunted" : "Not Stunted",
+          explanation: isStuntedValue
+            ? `Based on ${name}'s measurements and growth patterns, there are signs of stunting. The height-for-age is below the expected range for a child of this age and gender.`
+            : `Based on ${name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender.`
+        };
+        setAiResponse(fallbackResponse);
+        setIsAiLoading(false);
+      }
     }
 
     // Function to fetch new AI response
     async function fetchNewAiResponse() {
+      // Check if we should skip AI analysis (coming back from nutrition page)
+      if (window.skipAiAnalysis) {
+        console.log("Skipping AI analysis as requested - using stored or fallback data");
+
+        // Create a fallback response based on the percentile
+        const fallbackResponse = {
+          classification: isStuntedValue ? "Stunted" : "Not Stunted",
+          explanation: isStuntedValue
+            ? `Based on ${name}'s measurements and growth patterns, there are signs of stunting. The height-for-age is below the expected range for a child of this age and gender.`
+            : `Based on ${name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender.`
+        };
+
+        // Store the fallback response using the same consistent key format
+        const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}`;
+
+        // Check if we already have a stored response
+        const existingResponse = localStorage.getItem(`aiResponse-${childKey}`);
+        if (!existingResponse) {
+          // Only store if we don't already have a response
+          localStorage.setItem(`aiResponse-${childKey}`, JSON.stringify(fallbackResponse));
+        }
+
+        // Use existing response or fallback
+        try {
+          const parsedResponse = existingResponse ? JSON.parse(existingResponse) : fallbackResponse;
+          setAiResponse(parsedResponse);
+          setIsAiLoading(false);
+          return;
+        } catch (error) {
+          console.error("Error parsing stored AI response:", error);
+          setAiResponse(fallbackResponse);
+          setIsAiLoading(false);
+          return;
+        }
+      }
       try {
         // Create a complete data object with all required fields
         const completeChildData = {
           name: name || "Child",
-          age: `${ageYears} years, ${ageMonths} months`,
+          age: `${ageYears || 0} ${ageYears === 1 ? 'year' : 'years'}, ${ageMonths || 0} ${ageMonths === 1 ? 'month' : 'months'}`,
           gender: gender === 'M' ? 'Male' : 'Female',
           height: `${height} cm`,
           weight: `${weight} kg`,
@@ -257,8 +370,8 @@ export default function AssessmentResults() {
               : `Based on ${name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender. For a more comprehensive analysis, please provide a photo.`
           };
 
-          // Store the fallback response
-          const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}-no-photo`;
+          // Store the fallback response using the same consistent key format
+          const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}`;
           localStorage.setItem(`aiResponse-${childKey}`, JSON.stringify(fallbackResponse));
 
           setAiResponse(fallbackResponse);
@@ -283,9 +396,8 @@ export default function AssessmentResults() {
               : `Based on ${name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender.`
           };
 
-          // Store the fallback response
-          const photoHash = photo ? photo.substring(0, 50) : 'no-photo';
-          const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}-${photoHash}`;
+          // Store the fallback response using the same consistent key format
+          const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}`;
           localStorage.setItem(`aiResponse-${childKey}`, JSON.stringify(fallbackResponse));
 
           setAiResponse(fallbackResponse);
@@ -293,9 +405,9 @@ export default function AssessmentResults() {
           return;
         }
 
-        // Store AI response in localStorage using the same key format as when checking
-        const photoHash = photo ? photo.substring(0, 50) : 'no-photo';
-        const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}-${photoHash}`;
+        // Store AI response in localStorage using the same consistent key format
+        // We're using the same key format as when checking to ensure consistency
+        const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}`;
         localStorage.setItem(`aiResponse-${childKey}`, JSON.stringify(aiResult));
 
         setAiResponse(aiResult);
@@ -311,9 +423,8 @@ export default function AssessmentResults() {
             : `Based on ${name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender.`
         };
 
-        // Store the fallback response
-        const photoHash = photo ? photo.substring(0, 50) : 'no-photo';
-        const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}-${photoHash}`;
+        // Store the fallback response using the same consistent key format
+        const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}`;
         localStorage.setItem(`aiResponse-${childKey}`, JSON.stringify(fallbackResponse));
 
         // Set the fallback response as the AI response
@@ -593,11 +704,7 @@ export default function AssessmentResults() {
                     </h3>
                     <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
                       <p className="text-left text-gray-700 leading-relaxed">
-                        {aiResponse ? aiResponse.explanation : (
-                          isStunted
-                            ? `Based on ${childData.name}'s photo, measurements, and growth patterns, our AI has detected signs of stunting. The height-for-age is below the expected range for a child of this age and gender.`
-                            : `Based on ${childData.name}'s photo, measurements, and growth patterns, our AI has determined that growth appears to be within the normal range for a child of this age and gender.`
-                        )}
+                        {aiResponse && aiResponse.explanation}
                       </p>
                     </div>
                   </div>
@@ -656,163 +763,219 @@ export default function AssessmentResults() {
             </div>
           </section>
 
-          {/* Assessment Result Card */}
-          <div className="bg-white rounded-xl shadow-lg p-7 mb-10 fade-in-delay-1 card border border-blue-100 hover:shadow-xl transition-all duration-300">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 mr-3 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              Growth Assessment Result
-            </h2>
+          {/* Assessment Result Card - Only show when AI analysis is complete - Improved UI */}
+          {!isAiLoading && !hasError && aiResponse && (
+            <div className="bg-white rounded-xl shadow-lg p-7 mb-10 fade-in-delay-1 card border border-blue-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-semibold text-gray-800 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 mr-3 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  Growth Assessment Result
+                </h2>
 
-            <div className="flex flex-col md:flex-row gap-10">
-              {/* Result Status */}
-              <div className="flex-1">
-                <div
-                  className={`${ isStunted
-                    ? "bg-gradient-to-r from-yellow-50 to-amber-50 border-l-4 border-yellow-500"
-                    : "bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500"}
-                    p-5 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1`}
-                >
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                        (aiResponse && aiResponse.classification === "Stunted") || isStunted
-                          ? "bg-gradient-to-br from-yellow-400 to-amber-500"
-                          : "bg-gradient-to-br from-green-400 to-emerald-500"
-                      }`}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          {(aiResponse && aiResponse.classification === "Stunted") || isStunted ? (
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                          ) : (
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                          )}
-                        </svg>
+                <div className={`px-4 py-2 rounded-full shadow-md ${
+                  aiResponse.classification === "Stunted"
+                    ? "bg-gradient-to-r from-red-500 to-amber-500 text-white"
+                    : "bg-gradient-to-r from-green-500 to-emerald-500 text-white"
+                } flex items-center`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    {aiResponse.classification === "Stunted" ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    ) : (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    )}
+                  </svg>
+                  <span className="font-bold">{aiResponse.classification === "Stunted" ? "Stunting Detected" : "Normal Growth"}</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-8">
+                {/* Result Status */}
+                <div className="flex-1">
+                  <div
+                    className={`${ aiResponse.classification === "Stunted"
+                      ? "bg-gradient-to-r from-yellow-50 to-amber-50 border-l-4 border-yellow-500"
+                      : "bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500"}
+                      p-6 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1`}
+                  >
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 mt-1">
+                        <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
+                          aiResponse.classification === "Stunted"
+                            ? "bg-gradient-to-br from-yellow-400 to-amber-500"
+                            : "bg-gradient-to-br from-green-400 to-emerald-500"
+                        } shadow-lg`}>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            {aiResponse.classification === "Stunted" ? (
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            ) : (
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            )}
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="ml-5">
+                        <h3 className={`text-xl font-bold ${aiResponse.classification === "Stunted" ? "text-amber-800" : "text-emerald-800"} mb-2`}>
+                          {aiResponse.classification === "Stunted" ? "Stunting Detected" : "Normal Growth Detected"}
+                        </h3>
+                        <p className={`${aiResponse.classification === "Stunted" ? "text-amber-700" : "text-emerald-700"} text-base`}>
+                          {aiResponse.classification === "Stunted"
+                            ? "Your child's height-for-age is below the recommended range for their age group. This may indicate stunting, which can affect long-term growth and development."
+                            : "Your child's height-for-age is within the normal range for their age group. This indicates healthy growth and development."}
+                        </p>
+                        {aiResponse.classification === "Stunted" && (
+                          <div className="mt-3 p-3 bg-amber-100 rounded-lg border border-amber-200">
+                            <p className="text-amber-800 text-sm font-medium">
+                              <span className="font-bold">Recommendation:</span> Consult with a healthcare provider for personalized guidance on nutrition and growth monitoring.
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <div className="ml-4">
-                      <h3 className={`text-xl font-bold ${(aiResponse && aiResponse.classification === "Stunted") || isStunted ? "text-amber-800" : "text-emerald-800"}`}>
-                        {(aiResponse && aiResponse.classification === "Stunted") || isStunted ? "Stunting Detected" : "Normal Growth Detected"}
-                      </h3>
-                      <p className={`mt-1 ${(aiResponse && aiResponse.classification === "Stunted") || isStunted ? "text-amber-700" : "text-emerald-700"}`}>
-                        {(aiResponse && aiResponse.classification === "Stunted") || isStunted
-                          ? "Your child's height-for-age is below the recommended range for their age group."
-                          : "Your child's height-for-age is within the normal range for their age group."}
+                  </div>
+
+                  <div className="mt-8 bg-indigo-50 p-6 rounded-lg shadow-md">
+                    <h4 className="font-semibold text-indigo-800 mb-4 flex items-center text-lg">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                      </svg>
+                      Growth Percentile
+                    </h4>
+                    <div className="w-full bg-white rounded-full h-4 shadow-inner overflow-hidden">
+                      <div
+                        className={`progress-bar h-4 rounded-full transition-all duration-1000 ease-out ${aiResponse.classification === "Stunted" ? "bg-gradient-to-r from-yellow-400 to-amber-500" : "bg-gradient-to-r from-green-400 to-emerald-500"}`}
+                        style={{ width: childData.percentile ? `${parseInt(childData.percentile.toString().replace("th", ""), 10) || 0}%` : "0%" }}
+                      ></div>
+                    </div>
+                    <div className="flex justify-between mt-3 text-sm font-medium">
+                      <span className="text-gray-600">0%</span>
+                      <span className={`${aiResponse.classification === "Stunted" ? "text-amber-700" : "text-emerald-700"} font-bold text-lg`}>{childData.percentile || "0th"} Percentile</span>
+                      <span className="text-gray-600">100%</span>
+                    </div>
+                    <p className="mt-3 text-indigo-700 text-sm">
+                      {parseInt(childData.percentile?.toString().replace("th", "") || "0", 10) < 25
+                        ? "Your child is below the 25th percentile, which may indicate growth concerns."
+                        : parseInt(childData.percentile?.toString().replace("th", "") || "0", 10) > 75
+                          ? "Your child is above the 75th percentile, showing strong growth patterns."
+                          : "Your child is within the middle percentile range, showing typical growth patterns."}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Measurements */}
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-800 mb-5 flex items-center text-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    Measurements
+                  </h4>
+                  <div className="space-y-6 bg-blue-50 p-6 rounded-lg shadow-md">
+                    <div className="transform transition-all duration-300 hover:scale-105">
+                      <div className="flex justify-between mb-2">
+                        <span className="text-blue-800 font-medium flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
+                          </svg>
+                          Height
+                        </span>
+                        <span className="font-bold text-blue-900 bg-blue-100 px-4 py-1.5 rounded-full text-base">{childData.height}</span>
+                      </div>
+                      <div className="w-full bg-white rounded-full h-4 shadow-inner overflow-hidden">
+                        <div className="progress-bar bg-gradient-to-r from-blue-400 to-blue-600 h-4 rounded-full transition-all duration-1000 ease-out"
+                             style={{ width: childData.height ? `${Math.min(parseInt(childData.height.toString().replace(" cm", ""), 10) || 0, 150) / 1.5}%` : "0%" }}></div>
+                      </div>
+                      <p className="mt-2 text-blue-700 text-xs">
+                        {parseInt(childData.height?.toString().replace(" cm", "") || "0", 10) < 80
+                          ? "Height is below average for this age group"
+                          : parseInt(childData.height?.toString().replace(" cm", "") || "0", 10) > 120
+                            ? "Height is above average for this age group"
+                            : "Height is within average range for this age group"}
+                      </p>
+                    </div>
+
+                    <div className="transform transition-all duration-300 hover:scale-105">
+                      <div className="flex justify-between mb-2">
+                        <span className="text-green-800 font-medium flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                          </svg>
+                          Weight
+                        </span>
+                        <span className="font-bold text-green-900 bg-green-100 px-4 py-1.5 rounded-full text-base">{childData.weight}</span>
+                      </div>
+                      <div className="w-full bg-white rounded-full h-4 shadow-inner overflow-hidden">
+                        <div className="progress-bar bg-gradient-to-r from-green-400 to-green-600 h-4 rounded-full transition-all duration-1000 ease-out"
+                             style={{ width: childData.weight ? `${Math.min(parseInt(childData.weight.toString().replace(" kg", ""), 10) || 0, 30) * 3}%` : "0%" }}></div>
+                      </div>
+                      <p className="mt-2 text-green-700 text-xs">
+                        {parseInt(childData.weight?.toString().replace(" kg", "") || "0", 10) < 10
+                          ? "Weight is below average for this age group"
+                          : parseInt(childData.weight?.toString().replace(" kg", "") || "0", 10) > 20
+                            ? "Weight is above average for this age group"
+                            : "Weight is within average range for this age group"}
+                      </p>
+                    </div>
+
+                    <div className="transform transition-all duration-300 hover:scale-105">
+                      <div className="flex justify-between mb-2">
+                        <span className="text-purple-800 font-medium flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          </svg>
+                          BMI
+                        </span>
+                        <span className="font-bold text-purple-900 bg-purple-100 px-4 py-1.5 rounded-full text-base">{childData.bmi}</span>
+                      </div>
+                      <div className="w-full bg-white rounded-full h-4 shadow-inner overflow-hidden">
+                        <div className="progress-bar bg-gradient-to-r from-purple-400 to-purple-600 h-4 rounded-full transition-all duration-1000 ease-out"
+                             style={{ width: childData.bmi ? `${Math.min((parseFloat(childData.bmi) || 0) * 3, 100)}%` : "0%" }}></div>
+                      </div>
+                      <p className="mt-2 text-purple-700 text-xs">
+                        {parseFloat(childData.bmi || "0") < 14
+                          ? "BMI is below average for this age group"
+                          : parseFloat(childData.bmi || "0") > 18
+                            ? "BMI is above average for this age group"
+                            : "BMI is within healthy range for this age group"}
                       </p>
                     </div>
                   </div>
                 </div>
-
-                <div className="mt-8 bg-indigo-50 p-5 rounded-lg shadow-md">
-                  <h4 className="font-semibold text-indigo-800 mb-4 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
-                    Growth Percentile
-                  </h4>
-                  <div className="w-full bg-white rounded-full h-3 shadow-inner">
-                    <div
-                      className={`progress-bar h-3 rounded-full transition-all duration-1000 ease-out ${isStunted ? "bg-gradient-to-r from-yellow-400 to-amber-500" : "bg-gradient-to-r from-green-400 to-emerald-500"}`}
-                      style={{ width: childData.percentile ? `${parseInt(childData.percentile, 10)}%` : "0%" }}
-                    ></div>
-                  </div>
-                  <div className="flex justify-between mt-2 text-sm font-medium">
-                    <span className="text-gray-600">0%</span>
-                    <span className={`${isStunted ? "text-amber-700" : "text-emerald-700"} font-bold`}>{childData.percentile} Percentile</span>
-                    <span className="text-gray-600">100%</span>
-                  </div>
-                </div>
               </div>
-
-              {/* Measurements */}
-              <div className="flex-1">
-                <h4 className="font-semibold text-gray-800 mb-5 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </div>
+          )}
+          {/* AI Nutrition Analysis Card - Only show when AI analysis is complete */}
+          {!isAiLoading && !hasError && aiResponse && (
+            <div className="bg-white rounded-xl shadow-lg p-7 mb-10 fade-in-delay-2 card border border-blue-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 mr-3 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                AI Nutrition Analysis
+              </h2>
+              <div className="flex flex-col items-center justify-center py-6 px-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-100">
+                <div className="mb-6 w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg transform transition-transform duration-500 hover:scale-105">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
-                  Measurements
-                </h4>
-                <div className="space-y-6 bg-blue-50 p-5 rounded-lg shadow-md">
-                  <div className="transform transition-all duration-300 hover:scale-105">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-blue-800 font-medium flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
-                        </svg>
-                        Height
-                      </span>
-                      <span className="font-bold text-blue-900 bg-blue-100 px-3 py-1 rounded-full">{childData.height}</span>
-                    </div>
-                    <div className="w-full bg-white rounded-full h-3 shadow-inner">
-                      <div className="progress-bar bg-gradient-to-r from-blue-400 to-blue-600 h-3 rounded-full transition-all duration-1000 ease-out"
-                           style={{ width: childData.height ? `${Math.min(parseInt(childData.height), 150) / 1.5}%` : "0%" }}></div>
-                    </div>
-                  </div>
-
-                  <div className="transform transition-all duration-300 hover:scale-105">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-green-800 font-medium flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                        </svg>
-                        Weight
-                      </span>
-                      <span className="font-bold text-green-900 bg-green-100 px-3 py-1 rounded-full">{childData.weight}</span>
-                    </div>
-                    <div className="w-full bg-white rounded-full h-3 shadow-inner">
-                      <div className="progress-bar bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full transition-all duration-1000 ease-out"
-                           style={{ width: childData.weight ? `${Math.min(parseInt(childData.weight), 30) * 3}%` : "0%" }}></div>
-                    </div>
-                  </div>
-
-                  <div className="transform transition-all duration-300 hover:scale-105">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-purple-800 font-medium flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                        BMI
-                      </span>
-                      <span className="font-bold text-purple-900 bg-purple-100 px-3 py-1 rounded-full">{childData.bmi}</span>
-                    </div>
-                    <div className="w-full bg-white rounded-full h-3 shadow-inner">
-                      <div className="progress-bar bg-gradient-to-r from-purple-400 to-purple-600 h-3 rounded-full transition-all duration-1000 ease-out"
-                           style={{ width: childData.bmi ? `${Math.min(parseFloat(childData.bmi) * 3, 100)}%` : "0%" }}></div>
-                    </div>
-                  </div>
                 </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">Personalized Nutrition Recommendations</h3>
+                <p className="text-gray-600 text-center mb-6 max-w-md">
+                  Get AI-powered nutrition suggestions and meal recommendations tailored specifically for {childData.name}'s growth needs.
+                </p>
+                <button
+                  onClick={() => navigate('/nutrition-analysis', { state: { childData } })}
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                  Get Nutrition Analysis
+                </button>
               </div>
             </div>
-          </div>
-          {/* AI Nutrition Analysis Card */}
-          <div className="bg-white rounded-xl shadow-lg p-7 mb-10 fade-in-delay-2 card border border-blue-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 mr-3 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              AI Nutrition Analysis
-            </h2>
-            <div className="flex flex-col items-center justify-center py-6 px-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-100">
-              <div className="mb-6 w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg transform transition-transform duration-500 hover:scale-105">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Personalized Nutrition Recommendations</h3>
-              <p className="text-gray-600 text-center mb-6 max-w-md">
-                Get AI-powered nutrition suggestions and meal recommendations tailored specifically for {childData.name}'s growth needs.
-              </p>
-              <button
-                onClick={() => navigate('/nutrition-analysis', { state: { childData } })}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                </svg>
-                Get Nutrition Analysis
-              </button>
-            </div>
-          </div>
+          )}
         </main>
 
         {/* Footer */}

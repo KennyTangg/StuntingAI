@@ -2,6 +2,118 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../components/icons/Logo';
 
+// Function to calculate growth percentile based on height, weight, age and gender
+const calculatePercentile = (height, weight, ageYears, ageMonths, gender) => {
+  try {
+    // Convert height to number
+    const heightCm = parseFloat(height) || 0;
+    // Convert weight to number
+    const weightKg = parseFloat(weight) || 0;
+    // Calculate total age in months
+    const totalAgeMonths = (parseInt(ageYears) || 0) * 12 + (parseInt(ageMonths) || 0);
+
+    // If any of the values are invalid, return a default percentile
+    if (heightCm <= 0 || weightKg <= 0 || totalAgeMonths <= 0) {
+      return 50; // Default to 50th percentile
+    }
+
+    // Reference data - simplified WHO growth standards
+    // These are approximate values and should be replaced with actual WHO standards for production
+    const isMale = gender === 'M';
+
+    // Height-for-age percentile calculation (simplified)
+    let heightPercentile;
+
+    if (isMale) {
+      // Male height-for-age reference (simplified)
+      if (totalAgeMonths <= 12) { // 0-12 months
+        const medianHeight = 50 + (totalAgeMonths * 1.5); // Simplified growth curve
+        heightPercentile = calculateSinglePercentile(heightCm, medianHeight, 3.5);
+      } else if (totalAgeMonths <= 36) { // 1-3 years
+        const medianHeight = 68 + ((totalAgeMonths - 12) * 0.9); // Simplified growth curve
+        heightPercentile = calculateSinglePercentile(heightCm, medianHeight, 4);
+      } else if (totalAgeMonths <= 60) { // 3-5 years
+        const medianHeight = 90 + ((totalAgeMonths - 36) * 0.7); // Simplified growth curve
+        heightPercentile = calculateSinglePercentile(heightCm, medianHeight, 4.5);
+      } else { // > 5 years
+        const medianHeight = 108 + ((totalAgeMonths - 60) * 0.6); // Simplified growth curve
+        heightPercentile = calculateSinglePercentile(heightCm, medianHeight, 5);
+      }
+    } else {
+      // Female height-for-age reference (simplified)
+      if (totalAgeMonths <= 12) { // 0-12 months
+        const medianHeight = 49 + (totalAgeMonths * 1.4); // Simplified growth curve
+        heightPercentile = calculateSinglePercentile(heightCm, medianHeight, 3.5);
+      } else if (totalAgeMonths <= 36) { // 1-3 years
+        const medianHeight = 66 + ((totalAgeMonths - 12) * 0.85); // Simplified growth curve
+        heightPercentile = calculateSinglePercentile(heightCm, medianHeight, 4);
+      } else if (totalAgeMonths <= 60) { // 3-5 years
+        const medianHeight = 87 + ((totalAgeMonths - 36) * 0.7); // Simplified growth curve
+        heightPercentile = calculateSinglePercentile(heightCm, medianHeight, 4.5);
+      } else { // > 5 years
+        const medianHeight = 104 + ((totalAgeMonths - 60) * 0.6); // Simplified growth curve
+        heightPercentile = calculateSinglePercentile(heightCm, medianHeight, 5);
+      }
+    }
+
+    // Weight-for-age percentile calculation (simplified)
+    let weightPercentile;
+
+    if (isMale) {
+      // Male weight-for-age reference (simplified)
+      if (totalAgeMonths <= 12) { // 0-12 months
+        const medianWeight = 3.5 + (totalAgeMonths * 0.5); // Simplified growth curve
+        weightPercentile = calculateSinglePercentile(weightKg, medianWeight, 0.7);
+      } else if (totalAgeMonths <= 36) { // 1-3 years
+        const medianWeight = 9.5 + ((totalAgeMonths - 12) * 0.2); // Simplified growth curve
+        weightPercentile = calculateSinglePercentile(weightKg, medianWeight, 1.2);
+      } else if (totalAgeMonths <= 60) { // 3-5 years
+        const medianWeight = 14 + ((totalAgeMonths - 36) * 0.15); // Simplified growth curve
+        weightPercentile = calculateSinglePercentile(weightKg, medianWeight, 1.7);
+      } else { // > 5 years
+        const medianWeight = 18 + ((totalAgeMonths - 60) * 0.2); // Simplified growth curve
+        weightPercentile = calculateSinglePercentile(weightKg, medianWeight, 2);
+      }
+    } else {
+      // Female weight-for-age reference (simplified)
+      if (totalAgeMonths <= 12) { // 0-12 months
+        const medianWeight = 3.3 + (totalAgeMonths * 0.45); // Simplified growth curve
+        weightPercentile = calculateSinglePercentile(weightKg, medianWeight, 0.6);
+      } else if (totalAgeMonths <= 36) { // 1-3 years
+        const medianWeight = 9 + ((totalAgeMonths - 12) * 0.18); // Simplified growth curve
+        weightPercentile = calculateSinglePercentile(weightKg, medianWeight, 1.1);
+      } else if (totalAgeMonths <= 60) { // 3-5 years
+        const medianWeight = 13.5 + ((totalAgeMonths - 36) * 0.14); // Simplified growth curve
+        weightPercentile = calculateSinglePercentile(weightKg, medianWeight, 1.6);
+      } else { // > 5 years
+        const medianWeight = 17 + ((totalAgeMonths - 60) * 0.18); // Simplified growth curve
+        weightPercentile = calculateSinglePercentile(weightKg, medianWeight, 1.9);
+      }
+    }
+
+    // Combine height and weight percentiles (giving more weight to height for stunting assessment)
+    const combinedPercentile = Math.round((heightPercentile * 0.7) + (weightPercentile * 0.3));
+
+    // Ensure percentile is within valid range
+    return Math.max(1, Math.min(99, combinedPercentile));
+  } catch (error) {
+    console.error("Error calculating percentile:", error);
+    return 50; // Default to 50th percentile on error
+  }
+};
+
+// Helper function to calculate a single percentile based on value, median and standard deviation
+const calculateSinglePercentile = (value, median, standardDeviation) => {
+  // Z-score calculation
+  const zScore = (value - median) / standardDeviation;
+
+  // Convert Z-score to percentile using normal distribution approximation
+  // This is a simplified calculation and not statistically perfect
+  const percentile = Math.round(50 * (1 + Math.tanh(zScore * 0.7)));
+
+  return Math.max(1, Math.min(99, percentile));
+};
+
 export default function GetStarted() {
   const navigate = useNavigate();
   const [photoFile, setPhotoFile] = useState(null);
@@ -132,12 +244,12 @@ export default function GetStarted() {
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       const storedChildData = {
         name,
-        age: `${ageYears} years, ${ageMonths} months`,
+        age: `${ageYears || 0} ${ageYears === 1 ? 'year' : 'years'}, ${ageMonths || 0} ${ageMonths === 1 ? 'month' : 'months'}`,
         gender: gender === 'M' ? 'Male' : 'Female',
         height: `${height} cm`,
         weight: `${weight} kg`,
-        bmi: ((weight / Math.pow(height/100, 2)).toFixed(1)),
-        percentile: Math.floor(Math.random() * 100) + "th",
+        bmi: height > 0 ? ((weight / Math.pow(height/100, 2)).toFixed(1)) : "0.0",
+        percentile: calculatePercentile(height, weight, ageYears, ageMonths, gender) + "th",
         photo: photoPreview,
         assessmentDate: today.toLocaleDateString('en-US', options)
       };
@@ -483,7 +595,7 @@ export default function GetStarted() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <div>
+              <div className='flex-1'>
                 <span className="font-medium text-xs sm:text-sm">Success!</span>
                 <p className="text-xs sm:text-sm text-green-600">Information submitted successfully. Redirecting...</p>
               </div>
