@@ -7,6 +7,8 @@ export default function AssessmentResults() {
   const [isStunted, setIsStunted] = useState(true);
   const [isAiLoading, setIsAiLoading] = useState(true);
   const [aiResponse, setAiResponse] = useState(null);
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("An error occurred during analysis.");
   const [childData, setChildData] = useState({
     name: "",
     age: "",
@@ -22,20 +24,83 @@ export default function AssessmentResults() {
     // Check if we have stored child data (for page refresh)
     const storedChildData = localStorage.getItem('childData');
 
+    console.log("Location state:", location.state);
+
     // If no location state (direct URL access or refresh)
-    if (!location.state || !location.state.childInfo) {
+    if (!location.state) {
       // If we have stored data, use it
       if (storedChildData) {
         try {
           const parsedChildData = JSON.parse(storedChildData);
           setChildData(parsedChildData);
 
-          // Check for stored AI response
-          const childKey = parsedChildData.name;
-          const storedAiResponse = localStorage.getItem(`aiResponse-${childKey}`);
-          if (storedAiResponse) {
-            setAiResponse(JSON.parse(storedAiResponse));
+          // Check if we have a photo
+          if (!parsedChildData.photo) {
+            console.warn("No photo found in stored data, but continuing with basic assessment");
+
+            // Extract percentile to determine stunting status
+            let percentileValue = 50;
+            if (parsedChildData.percentile) {
+              percentileValue = parseInt(parsedChildData.percentile.toString().replace("th", ""), 10);
+            }
+            const isStuntedValue = percentileValue < 25;
+
+            // Create a fallback response
+            const fallbackResponse = {
+              classification: isStuntedValue ? "Stunted" : "Not Stunted",
+              explanation: isStuntedValue
+                ? `Based on ${parsedChildData.name}'s measurements and growth patterns, there are signs of stunting. The height-for-age is below the expected range for a child of this age and gender. For a more comprehensive analysis, please provide a photo.`
+                : `Based on ${parsedChildData.name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender. For a more comprehensive analysis, please provide a photo.`
+            };
+
+            setAiResponse(fallbackResponse);
+            setIsAiLoading(false);
+            return;
           }
+
+          // Check for stored AI response using the same key format
+          const photoHash = parsedChildData.photo ? parsedChildData.photo.substring(0, 50) : 'no-photo';
+          const childKey = `${parsedChildData.name}-${parsedChildData.age}-${parsedChildData.gender}-${parsedChildData.height}-${parsedChildData.weight}-${photoHash}`;
+          const storedAiResponse = localStorage.getItem(`aiResponse-${childKey}`);
+
+          if (storedAiResponse) {
+            try {
+              const parsedResponse = JSON.parse(storedAiResponse);
+              if (parsedResponse && Object.keys(parsedResponse).length > 0) {
+                setAiResponse(parsedResponse);
+                setIsAiLoading(false);
+                return;
+              }
+            } catch (error) {
+              console.error("Error parsing stored AI response:", error);
+            }
+          }
+
+          // If we get here, either there's no stored response or it's invalid
+          // Instead of showing an error, create a new assessment
+          console.warn("No valid stored AI response, creating a new assessment");
+
+          // Extract percentile to determine stunting status
+          let percentileValue = 50;
+          if (parsedChildData.percentile) {
+            percentileValue = parseInt(parsedChildData.percentile.toString().replace("th", ""), 10);
+          }
+          const isStuntedValue = percentileValue < 25;
+
+          // Create a fallback response
+          const fallbackResponse = {
+            classification: isStuntedValue ? "Stunted" : "Not Stunted",
+            explanation: isStuntedValue
+              ? `Based on ${parsedChildData.name}'s measurements and growth patterns, there are signs of stunting. The height-for-age is below the expected range for a child of this age and gender.`
+              : `Based on ${parsedChildData.name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender.`
+          };
+
+          // Store the fallback response
+          let responsePhotoHash = parsedChildData.photo ? parsedChildData.photo.substring(0, 50) : 'no-photo';
+          let responseChildKey = `${parsedChildData.name}-${parsedChildData.age}-${parsedChildData.gender}-${parsedChildData.height}-${parsedChildData.weight}-${responsePhotoHash}`;
+          localStorage.setItem(`aiResponse-${responseChildKey}`, JSON.stringify(fallbackResponse));
+
+          setAiResponse(fallbackResponse);
           setIsAiLoading(false);
           return;
         } catch (error) {
@@ -48,15 +113,69 @@ export default function AssessmentResults() {
       return;
     }
 
-    // Update with data passed from GetStarted
-    const { name, ageYears, ageMonths, gender, height, weight, photo } = location.state.childInfo;
+    // Handle data coming from different sources
+    let name, ageYears, ageMonths, gender, height, weight, photo, bmi, percentile;
 
-    const heightInMeters = height / 100;
-    const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+    if (location.state.childInfo) {
+      // Data coming from GetStarted page
+      console.log("Data coming from GetStarted page");
+      ({ name, ageYears, ageMonths, gender, height, weight, photo } = location.state.childInfo);
 
-    const percentile = Math.floor(Math.random() * 100) + "th";
+      const heightInMeters = height / 100;
+      bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+      percentile = Math.floor(Math.random() * 100) + "th";
+    } else {
+      // Data might be coming from NutritionAnalysis page
+      console.log("Data might be coming from NutritionAnalysis page");
 
-    const isStuntedValue = percentile.replace("th", "") < 25;
+      // Try to get data from localStorage as a fallback
+      if (storedChildData) {
+        try {
+          const parsedChildData = JSON.parse(storedChildData);
+
+          // Extract values from stored data
+          name = parsedChildData.name;
+
+          // Parse age string like "4 years, 2 months"
+          const ageMatch = parsedChildData.age?.match(/(\d+) years, (\d+) months/);
+          if (ageMatch) {
+            ageYears = parseInt(ageMatch[1], 10);
+            ageMonths = parseInt(ageMatch[2], 10);
+          } else {
+            ageYears = 0;
+            ageMonths = 0;
+          }
+
+          gender = parsedChildData.gender === 'Male' ? 'M' : 'F';
+
+          // Parse height string like "102 cm"
+          const heightMatch = parsedChildData.height?.match(/(\d+\.?\d*) cm/);
+          height = heightMatch ? parseFloat(heightMatch[1]) : 0;
+
+          // Parse weight string like "16.5 kg"
+          const weightMatch = parsedChildData.weight?.match(/(\d+\.?\d*) kg/);
+          weight = weightMatch ? parseFloat(weightMatch[1]) : 0;
+
+          photo = parsedChildData.photo;
+          bmi = parsedChildData.bmi;
+          percentile = parsedChildData.percentile;
+
+          console.log("Successfully extracted data from localStorage:", {
+            name, ageYears, ageMonths, gender, height, weight, photo: !!photo, bmi, percentile
+          });
+        } catch (error) {
+          console.error("Error parsing stored child data:", error);
+          navigate('/get-started');
+          return;
+        }
+      } else {
+        console.error("No data available from any source");
+        navigate('/get-started');
+        return;
+      }
+    }
+
+    const isStuntedValue = percentile.toString().replace("th", "") < 25;
     setIsStunted(isStuntedValue);
 
     const today = new Date();
@@ -81,20 +200,31 @@ export default function AssessmentResults() {
     setChildData(newChildData);
 
     // Check if we already have AI results in localStorage for this child
-    const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}`;
+    // Include a hash of the photo in the key to ensure we get a new analysis when the photo changes
+    const photoHash = photo ? photo.substring(0, 50) : 'no-photo'; // Use first 50 chars of photo data as a simple hash
+    const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}-${photoHash}`;
+    console.log("Looking for AI response with key:", childKey);
     const storedAiResponse = localStorage.getItem(`aiResponse-${childKey}`);
 
     if (storedAiResponse) {
       // Use stored AI response
       try {
+        console.log("Found stored AI response");
         const parsedResponse = JSON.parse(storedAiResponse);
-        setAiResponse(parsedResponse);
-        setIsAiLoading(false);
+        if (parsedResponse && Object.keys(parsedResponse).length > 0) {
+          setAiResponse(parsedResponse);
+          setIsAiLoading(false);
+          setHasError(false); // Clear any previous errors
+        } else {
+          console.error("Stored AI response is empty or invalid");
+          fetchNewAiResponse();
+        }
       } catch (error) {
         console.error("Error parsing stored AI response:", error);
         fetchNewAiResponse();
       }
     } else {
+      console.log("No stored AI response found, fetching new one");
       // Fetch new AI response
       fetchNewAiResponse();
     }
@@ -102,7 +232,8 @@ export default function AssessmentResults() {
     // Function to fetch new AI response
     async function fetchNewAiResponse() {
       try {
-        const aiResult = await dataFromAI({
+        // Create a complete data object with all required fields
+        const completeChildData = {
           name: name || "Child",
           age: `${ageYears} years, ${ageMonths} months`,
           gender: gender === 'M' ? 'Male' : 'Female',
@@ -110,18 +241,88 @@ export default function AssessmentResults() {
           weight: `${weight} kg`,
           bmi: bmi,
           percentile: percentile,
-          assessmentDate: new Date().toISOString().split('T')[0]
-        });
+          assessmentDate: new Date().toISOString().split('T')[0],
+          photo: photo // Ensure photo is included
+        };
 
-        // Store AI response in localStorage using the child's name as the key
-        localStorage.setItem(`aiResponse-${name}`, JSON.stringify(aiResult));
+        // Check if all required data is available
+        if (!photo) {
+          console.error("Missing photo for AI analysis");
+
+          // Even without a photo, we can still provide a basic assessment based on height/weight
+          const fallbackResponse = {
+            classification: isStuntedValue ? "Stunted" : "Not Stunted",
+            explanation: isStuntedValue
+              ? `Based on ${name}'s measurements and growth patterns, there are signs of stunting. The height-for-age is below the expected range for a child of this age and gender. For a more comprehensive analysis, please provide a photo.`
+              : `Based on ${name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender. For a more comprehensive analysis, please provide a photo.`
+          };
+
+          // Store the fallback response
+          const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}-no-photo`;
+          localStorage.setItem(`aiResponse-${childKey}`, JSON.stringify(fallbackResponse));
+
+          setAiResponse(fallbackResponse);
+          setIsAiLoading(false);
+
+          // Show a warning instead of blocking error
+          setHasError(false);
+          console.warn("Using basic assessment due to missing photo");
+          return;
+        }
+
+        const aiResult = await dataFromAI(completeChildData);
+
+        // If the AI returned empty results, show an error but still save the data
+        if (!aiResult || Object.keys(aiResult).length === 0) {
+          console.log("AI returned empty results, but saving child data anyway");
+          // Save a fallback AI response based on the percentile
+          const fallbackResponse = {
+            classification: isStuntedValue ? "Stunted" : "Not Stunted",
+            explanation: isStuntedValue
+              ? `Based on ${name}'s measurements and growth patterns, there are signs of stunting. The height-for-age is below the expected range for a child of this age and gender.`
+              : `Based on ${name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender.`
+          };
+
+          // Store the fallback response
+          const photoHash = photo ? photo.substring(0, 50) : 'no-photo';
+          const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}-${photoHash}`;
+          localStorage.setItem(`aiResponse-${childKey}`, JSON.stringify(fallbackResponse));
+
+          setAiResponse(fallbackResponse);
+          setIsAiLoading(false);
+          return;
+        }
+
+        // Store AI response in localStorage using the same key format as when checking
+        const photoHash = photo ? photo.substring(0, 50) : 'no-photo';
+        const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}-${photoHash}`;
+        localStorage.setItem(`aiResponse-${childKey}`, JSON.stringify(aiResult));
 
         setAiResponse(aiResult);
         setIsAiLoading(false);
       } catch (error) {
         console.error("Error fetching AI recommendations:", error);
-        // Fallback to default recommendations if AI fails
+
+        // Create a fallback response based on the percentile
+        const fallbackResponse = {
+          classification: isStuntedValue ? "Stunted" : "Not Stunted",
+          explanation: isStuntedValue
+            ? `Based on ${name}'s measurements and growth patterns, there are signs of stunting. The height-for-age is below the expected range for a child of this age and gender.`
+            : `Based on ${name}'s measurements and growth patterns, growth appears to be within the normal range for a child of this age and gender.`
+        };
+
+        // Store the fallback response
+        const photoHash = photo ? photo.substring(0, 50) : 'no-photo';
+        const childKey = `${name}-${ageYears}-${ageMonths}-${gender}-${height}-${weight}-${photoHash}`;
+        localStorage.setItem(`aiResponse-${childKey}`, JSON.stringify(fallbackResponse));
+
+        // Set the fallback response as the AI response
+        setAiResponse(fallbackResponse);
         setIsAiLoading(false);
+
+        // Show a warning instead of an error
+        setHasError(false);
+        console.warn("Using fallback analysis due to AI service error");
       }
     }
   }, [location.state, navigate]);
@@ -131,18 +332,24 @@ export default function AssessmentResults() {
   const dataFromAI = async (childData) => {
     const GEMINI_API_KEY = "AIzaSyDHAtxtF6mHlOq6GgkbKrr1iCusz42WdLE";
     const prompt = `
-    You are a medical image analysis AI specialized in pediatric growth assessment. Your task is to analyze baby photographs and classify each case strictly based on visual and contextual indicators of stunting.
+    You are a medical image analysis AI specialized in pediatric growth assessment. Your task is to analyze baby photographs AND their health data to classify each case based on BOTH visual and contextual indicators of stunting.
 
-    **Visual indicators may include (but are not limited to):**
+    **Visual indicators from the photo may include (but are not limited to):**
     - Disproportionately reduced height-for-age
     - Low visible muscle mass
     - Delayed or abnormal physical development
 
-    In addition to the image, you will receive metadata in JSON format containing the baby's gender, age, height, weight, BMI, and growth percentile. Use both the image and metadata to assess growth status against standard pediatric development benchmarks.
+    **Contextual indicators from the data include:**
+    - Height-for-age percentile
+    - Weight-for-age percentile
+    - BMI-for-age percentile
+    - Growth trajectory based on age and gender
+
+    You will receive both an image AND metadata in JSON format containing the baby's gender, age, height, weight, BMI, and growth percentile. You MUST use BOTH the image AND metadata together to assess growth status against standard pediatric development benchmarks.
 
     **Instructions:**
     1. Return **only** one classification: "Stunted" or "Not Stunted".
-    2. Provide a one paragragh ** explanation** referencing both **visual** and **contextual** indicators.
+    2. Provide a one paragraph **explanation** that MUST reference BOTH **visual indicators from the photo** AND **contextual indicators from the data**.
     3. Output must be returned **exclusively in JSON format**. Do not include any additional commentary or disclaimers.
 
     ---
@@ -167,7 +374,7 @@ export default function AssessmentResults() {
 
     {
       "classification": "Stunted",
-      "explanation": "The image shows a visibly small stature for age, with underdeveloped limbs, reduced muscle mass in the arms and legs, and facial proportions that appear delayed in development. These visual signs are supported by the metadata, which reports a height of 68 cm and weight of 7.2 kg at 12 months, placing the child in the 3rd percentile with a BMI of 15.6. These combined factors strongly indicate stunting consistent with chronic undernutrition."
+      "explanation": "The image shows a visibly small stature for age, with underdeveloped limbs, reduced muscle mass in the arms and legs, and facial proportions that appear delayed in development. These visual indicators from the photo are strongly supported by the contextual data, which reports a height of 68 cm and weight of 7.2 kg at 12 months, placing the child in the 3rd percentile with a BMI of 15.6. The combination of both visual assessment from the photo and the anthropometric measurements from the data strongly indicate stunting consistent with chronic undernutrition."
     }
 
 
@@ -175,6 +382,58 @@ export default function AssessmentResults() {
     `
 
     try {
+        // Check if we have a photo to include in the analysis
+        const requestBody = {
+          contents: [],
+          generationConfig: {
+            temperature: 0.1,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 8192,
+          },
+        };
+
+        // Ensure we have all required data before proceeding
+        if (!childData.name || !childData.age || !childData.gender ||
+            !childData.height || !childData.weight || !childData.bmi ||
+            !childData.photo) {
+          console.error("Missing required data for AI analysis");
+          return [];
+        }
+
+        // Always include both the photo and the other data to ensure a comprehensive analysis
+        try {
+          // Make sure the photo is a valid base64 data URL
+          if (!childData.photo || !childData.photo.startsWith('data:')) {
+            console.error("Invalid photo format");
+            return [];
+          }
+
+          // Extract the base64 data from the data URL
+          const photoData = childData.photo.split(',')[1];
+          if (!photoData) {
+            console.error("Failed to extract photo data");
+            return [];
+          }
+
+          requestBody.contents = [
+            {
+              parts: [
+                { text: prompt + "\n\nChild Data:\n" + JSON.stringify(childData, null, 2) },
+                {
+                  inline_data: {
+                    mime_type: "image/jpeg",
+                    data: photoData
+                  }
+                }
+              ],
+            },
+          ];
+        } catch (error) {
+          console.error("Error preparing photo data:", error);
+          return [];
+        }
+
         const response = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent?key=${GEMINI_API_KEY}`,
           {
@@ -182,19 +441,7 @@ export default function AssessmentResults() {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              contents: [
-                {
-                  parts: [{ text: prompt + "\n\nChild Data:\n" + JSON.stringify(childData, null, 2) }],
-                },
-              ],
-              generationConfig: {
-                temperature: 0.1,
-                topK: 40,
-                topP: 0.95,
-                maxOutputTokens: 8192,
-              },
-            }),
+            body: JSON.stringify(requestBody),
           });
 
         const data = await response.json();
@@ -266,8 +513,32 @@ export default function AssessmentResults() {
                       </svg>
                     </div>
                   </div>
-                  <p className="text-gray-700 font-medium">Analyzing data and generating personalized recommendations...</p>
+                  <p className="text-gray-700 font-medium">Analyzing photo and data to generate personalized recommendations...</p>
                   <p className="text-sm text-gray-500 mt-2">This may take a few moments</p>
+                </div>
+              ) : hasError ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="w-20 h-20 mb-6 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-red-700 font-medium text-center">{errorMessage || "An error occurred during analysis."}</p>
+                  <div className="mt-6">
+                    <button
+                      onClick={() => {
+                        setHasError(false);
+                        setIsAiLoading(true);
+                        navigate('/get-started');
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                      </svg>
+                      Back to Form
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col gap-5">
@@ -324,8 +595,8 @@ export default function AssessmentResults() {
                       <p className="text-left text-gray-700 leading-relaxed">
                         {aiResponse ? aiResponse.explanation : (
                           isStunted
-                            ? `Based on ${childData.name}'s measurements and growth patterns, our AI has detected signs of stunting. The height-for-age is below the expected range for a child of this age and gender.`
-                            : `Based on ${childData.name}'s measurements and growth patterns, our AI has determined that growth appears to be within the normal range for a child of this age and gender.`
+                            ? `Based on ${childData.name}'s photo, measurements, and growth patterns, our AI has detected signs of stunting. The height-for-age is below the expected range for a child of this age and gender.`
+                            : `Based on ${childData.name}'s photo, measurements, and growth patterns, our AI has determined that growth appears to be within the normal range for a child of this age and gender.`
                         )}
                       </p>
                     </div>

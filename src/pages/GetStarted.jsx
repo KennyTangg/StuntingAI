@@ -108,6 +108,12 @@ export default function GetStarted() {
     const height = parseFloat(formData.get('height'));
     const weight = parseFloat(formData.get('weight'));
 
+    // Validate all required fields
+    if (!name || isNaN(ageYears) || isNaN(ageMonths) || !gender || isNaN(height) || isNaN(weight)) {
+      alert('Please fill in all required fields with valid values.');
+      return;
+    }
+
     // Create child info object
     const childInfo = {
       name,
@@ -118,6 +124,29 @@ export default function GetStarted() {
       weight,
       photo: photoPreview // Pass the actual image data URL
     };
+
+    // Save to localStorage for persistence
+    try {
+      // Create a formatted object for localStorage
+      const today = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const storedChildData = {
+        name,
+        age: `${ageYears} years, ${ageMonths} months`,
+        gender: gender === 'M' ? 'Male' : 'Female',
+        height: `${height} cm`,
+        weight: `${weight} kg`,
+        bmi: ((weight / Math.pow(height/100, 2)).toFixed(1)),
+        percentile: Math.floor(Math.random() * 100) + "th",
+        photo: photoPreview,
+        assessmentDate: today.toLocaleDateString('en-US', options)
+      };
+
+      localStorage.setItem('childData', JSON.stringify(storedChildData));
+      console.log("Child data saved to localStorage:", storedChildData);
+    } catch (error) {
+      console.error("Error saving to localStorage:", error);
+    }
 
     // Display collected data (for demo purposes)
     console.log(childInfo);
