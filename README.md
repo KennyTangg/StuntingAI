@@ -101,7 +101,7 @@ npm run dev
 * Link to medical databases / WHO child growth standards
 * Multilingual support for broader reach
 
-# License & Atrribution
+# License & Attribution
 
 * MIT License
 * AI via Gemini API
