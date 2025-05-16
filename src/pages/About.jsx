@@ -122,19 +122,21 @@ export default function About() {
             />
           </svg>
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <Link to="/" className="text-blue-400 hover:text-blue-300 mb-8 inline-flex items-center">
-            <svg className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to home
-          </Link>
-          <h1 className="text-5xl font-bold text-white mt-6 mb-4">About StuntingAI</h1>
-          <p className="text-xl text-blue-100 max-w-3xl">
-            A cutting-edge platform designed to help healthcare professionals identify,
-            monitor, and address childhood growth issues, with a particular focus on stunting prevention.
-          </p>
-        </div>
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-14 w-full">
+          <div className="w-full text-left">
+            <Link to="/" className="text-blue-400 hover:text-blue-300 mb-8 inline-flex items-center">
+              <svg className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to home
+            </Link>
+          </div>
+            <h1 className="text-5xl font-bold text-white mt-6 mb-4">About StuntingAI</h1>
+            <p className="text-xl text-blue-100 w-full text-center">
+              A gemini powered platform designed to help anyone anywhere in the world to
+               diagnose stunting in children and provide personalized diet plans to cure stunting during the early childhood stages.
+            </p>
+          </div>
       </div>
 
       {/* Mission Section */}
@@ -144,13 +146,12 @@ export default function About() {
             <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8">
               <h2 className="text-3xl font-bold text-white mb-4">Our Mission</h2>
               <p className="text-slate-300 text-lg">
-                Our mission is to leverage artificial intelligence and data analytics to improve childhood
-                health outcomes globally, making advanced growth monitoring tools accessible to healthcare
-                providers everywhere.
+                Our mission is to leverage artificial intelligence and data analytics to cure and alliviate
+                stunting in children worldwide, especially in our home country where apporximately 1 in 5 children are stunted.
               </p>
               <p className="text-slate-300 text-lg mt-4">
                 We believe that early detection and intervention are key to preventing stunting and
-                ensuring healthy development for all children.
+                ensuring healthy development for all children worldwide.
               </p>
             </div>
             <div className="md:w-1/2 flex justify-center">
@@ -168,53 +169,7 @@ export default function About() {
           </div>
         </div>
       </div>
-
-      {/* Features Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl font-bold text-white text-center mb-12">Our Features</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 hover:border-blue-500/30 transition-all shadow-lg"
-            >
-              <div className="bg-slate-900/80 w-16 h-16 rounded-lg flex items-center justify-center mb-4">
-                {feature.icon}
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-              <p className="text-slate-300">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Timeline Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl font-bold text-white text-center mb-12">Our Journey</h2>
-        <div className="relative">
-          {/* Vertical line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-blue-900"></div>
-
-          <div className="space-y-12">
-            {timeline.map((item, index) => (
-              <div key={index} className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
-                <div className={`w-1/2 ${index % 2 === 0 ? 'pr-12 text-right' : 'pl-12'}`}>
-                  <div className={`bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 shadow-lg ${index % 2 === 0 ? 'ml-auto' : 'mr-auto'}`} style={{maxWidth: '80%'}}>
-                    <span className="text-blue-500 font-bold text-lg">{item.year}</span>
-                    <h3 className="text-xl font-semibold text-white mt-1 mb-2">{item.title}</h3>
-                    <p className="text-slate-300">{item.description}</p>
-                  </div>
-                </div>
-                <div className="z-10 flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full border-4 border-slate-900">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-                <div className="w-1/2"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
+      
       {/* Team Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-bold text-white text-center mb-12">Our Team</h2>
@@ -238,23 +193,6 @@ export default function About() {
               </div>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* Call to Action */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-gradient-to-r from-blue-900 to-slate-900 rounded-2xl p-8 md:p-12 shadow-xl text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Join Us in Making a Difference</h2>
-          <p className="text-slate-300 text-lg max-w-3xl mx-auto mb-8">
-            Together, we can improve childhood health outcomes and prevent stunting through
-            early detection and personalized interventions.
-          </p>
-          <Link
-            to="/contact"
-            className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition-all transform hover:-translate-y-1 hover:shadow-lg"
-          >
-            Contact Us
-          </Link>
         </div>
       </div>
     </div>

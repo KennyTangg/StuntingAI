@@ -128,15 +128,17 @@ export default function Contact() {
             />
           </svg>
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <Link to="/" className="text-blue-400 hover:text-blue-300 mb-8 inline-flex items-center">
-            <svg className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to home
-          </Link>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-14 w-full">
+          <div className="w-full text-left">
+            <Link to="/" className="text-blue-400 hover:text-blue-300 mb-8 inline-flex items-center">
+              <svg className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to home
+            </Link>
+          </div>
           <h1 className="text-5xl font-bold text-white mt-6 mb-4">Get in Touch</h1>
-          <p className="text-xl text-blue-100 max-w-3xl">
+          <p className="text-xl text-blue-100 w-full text-center">
             Have questions about StuntingAI? We're here to help. Reach out to our team and we'll get back to you as soon as possible.
           </p>
         </div>
@@ -155,7 +157,7 @@ export default function Contact() {
                   <div className="flex-shrink-0 bg-slate-900/80 w-10 h-10 rounded-lg flex items-center justify-center mr-4">
                     <EmailIcon />
                   </div>
-                  <div>
+                  <div className='text-left'>
                     <h3 className="text-lg font-semibold text-white">Email</h3>
                     <a href="mailto:support@stuntingai.com" className="text-slate-300 hover:text-blue-400 transition-colors">
                       support@stuntingai.com
@@ -167,7 +169,7 @@ export default function Contact() {
                   <div className="flex-shrink-0 bg-slate-900/80 w-10 h-10 rounded-lg flex items-center justify-center mr-4">
                     <PhoneIcon />
                   </div>
-                  <div>
+                  <div className='text-left'>
                     <h3 className="text-lg font-semibold text-white">Phone</h3>
                     <a href="tel:+15551234567" className="text-slate-300 hover:text-blue-400 transition-colors">
                       +1 (555) 123-4567
@@ -179,7 +181,7 @@ export default function Contact() {
                   <div className="flex-shrink-0 bg-slate-900/80 w-10 h-10 rounded-lg flex items-center justify-center mr-4">
                     <LocationIcon />
                   </div>
-                  <div>
+                  <div className='text-left'>
                     <h3 className="text-lg font-semibold text-white">Address</h3>
                     <p className="text-slate-300">
                       123 Health Tech Plaza<br />
@@ -193,7 +195,7 @@ export default function Contact() {
                   <div className="flex-shrink-0 bg-slate-900/80 w-10 h-10 rounded-lg flex items-center justify-center mr-4">
                     <ClockIcon />
                   </div>
-                  <div>
+                  <div className='text-left'>
                     <h3 className="text-lg font-semibold text-white">Office Hours</h3>
                     <p className="text-slate-300">
                       Monday - Friday<br />
@@ -205,7 +207,7 @@ export default function Contact() {
 
               <div className="mt-8 pt-8 border-t border-slate-700">
                 <h3 className="text-lg font-semibold text-white mb-4">Connect With Us</h3>
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 justify-center">
                   <a href="#" className="bg-slate-900/80 w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-blue-400 hover:bg-slate-800 transition-colors">
                     <TwitterIcon />
                   </a>
@@ -231,7 +233,7 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">Full Name</label>
+                    <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2 text-left">Full Name</label>
                     <input
                       type="text"
                       id="name"
@@ -244,7 +246,7 @@ export default function Contact() {
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
+                    <label htmlFor="email" className="text-left block text-sm font-medium text-slate-300 mb-2">Email Address</label>
                     <input
                       type="email"
                       id="email"
@@ -258,7 +260,7 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-slate-300 mb-2">Subject</label>
+                  <label htmlFor="subject" className="block text-sm font-medium text-slate-300 mb-2 text-left">Subject</label>
                   <input
                     type="text"
                     id="subject"
@@ -271,13 +273,13 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-slate-300 mb-2">Message</label>
+                  <label htmlFor="message" className="text-left block text-sm font-medium text-slate-300 mb-2">Message</label>
                   <textarea
                     id="message"
                     rows="6"
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className="text-left w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     placeholder="How can we help you?"
                     required
                   ></textarea>
@@ -339,22 +341,6 @@ export default function Contact() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Map Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700/50 shadow-lg">
-          <div className="aspect-w-16 aspect-h-9 w-full h-96 bg-slate-900 flex items-center justify-center">
-            {/* In a real application, you would embed a Google Map or similar here */}
-            <div className="text-center p-8">
-              <LocationIcon />
-              <p className="text-slate-300 mt-4">
-                Interactive map would be displayed here.<br />
-                For implementation, you would use Google Maps API or similar service.
-              </p>
-            </div>
           </div>
         </div>
       </div>
