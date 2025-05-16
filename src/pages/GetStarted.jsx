@@ -84,20 +84,22 @@ export default function GetStarted() {
 
     // Get form values
     const formData = new FormData(e.target);
-    const ageYears = formData.get('ageYears');
-    const ageMonths = formData.get('ageMonths');
+    const name = formData.get('name');
+    const ageYears = parseInt(formData.get('ageYears'), 10);
+    const ageMonths = parseInt(formData.get('ageMonths'), 10);
     const gender = formData.get('gender');
-    const height = formData.get('height');
-    const weight = formData.get('weight');
+    const height = parseFloat(formData.get('height'));
+    const weight = parseFloat(formData.get('weight'));
 
     // Create child info object
     const childInfo = {
+      name,
       ageYears,
       ageMonths,
       gender,
       height,
       weight,
-      photo: photoFile ? photoFile.name : null
+      photo: photoPreview // Pass the actual image data URL
     };
 
     // Display collected data (for demo purposes)
@@ -137,6 +139,19 @@ export default function GetStarted() {
           </div>
 
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+            {/* Name Field */}
+            <div className="mb-4">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Child's Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Enter child's name"
+                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-base text-gray-900 placeholder-gray-400"
+                required
+              />
+            </div>
+
             {/* Age Field */}
             <div className="mb-4">
               <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">Age</label>
