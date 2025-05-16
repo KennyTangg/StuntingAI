@@ -115,7 +115,7 @@ export default function GetStarted() {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center p-3 bg-gradient-to-br from-[#0a1122] to-[#1a2342]">
+    <div className="text-left h-screen flex items-center justify-center p-3 bg-gradient-to-br from-[#0a1122] to-[#1a2342]">
       <div className="bg-white/95 backdrop-blur-sm w-full max-w-xl p-4 rounded-xl shadow-xl border border-blue-100/20 relative">
         {/* Back Button - Positioned at top left corner of the card */}
         <button
