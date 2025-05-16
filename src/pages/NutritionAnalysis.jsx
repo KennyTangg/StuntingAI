@@ -316,7 +316,37 @@ export default function NutritionAnalysis() {
         {/* Back Button */}
         <div className="mb-6 sm:mb-8 flex space-x-4 sm:space-x-6">
           <button
-            onClick={() => navigate('/assessment-results')}
+            onClick={() => {
+              // Get the stored child data from localStorage to ensure we have the complete data
+              const storedChildData = localStorage.getItem('childData');
+              if (storedChildData) {
+                try {
+                  const parsedChildData = JSON.parse(storedChildData);
+
+                  // Navigate back to assessment results with the complete child data
+                  navigate('/assessment-results', {
+                    state: {
+                      childInfo: {
+                        name: parsedChildData.name,
+                        ageYears: parsedChildData.age ? parseInt(parsedChildData.age.split(' ')[0]) : 0,
+                        ageMonths: parsedChildData.age ? parseInt(parsedChildData.age.split(' ')[3]) : 0,
+                        gender: parsedChildData.gender === 'Male' ? 'M' : 'F',
+                        height: parsedChildData.height ? parseFloat(parsedChildData.height.split(' ')[0]) : 0,
+                        weight: parsedChildData.weight ? parseFloat(parsedChildData.weight.split(' ')[0]) : 0,
+                        photo: parsedChildData.photo
+                      }
+                    }
+                  });
+                } catch (error) {
+                  console.error("Error parsing stored child data:", error);
+                  // Fallback to simple navigation if there's an error
+                  navigate('/assessment-results');
+                }
+              } else {
+                // Fallback to simple navigation if there's no stored data
+                navigate('/assessment-results');
+              }
+            }}
             className="flex items-center text-blue-400 hover:text-blue-300 transition-all duration-300 transform hover:scale-105 bg-blue-900/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base shadow-md hover:shadow-lg"
           >
             <svg className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
