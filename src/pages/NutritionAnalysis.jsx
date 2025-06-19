@@ -608,7 +608,7 @@ export default function NutritionAnalysis() {
   };
 
   const nutritionDataFromAI = async (childData) => {
-    const GEMINI_API_KEY = "AIzaSyDHAtxtF6mHlOq6GgkbKrr1iCusz42WdLE";
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
     const prompt = `
         You are a pediatric nutritionist AI specialized in creating personalized nutrition plans for children. Your task is to analyze a child's data and provide comprehensive nutrition recommendations to support healthy growth and development.
 
@@ -815,7 +815,7 @@ export default function NutritionAnalysis() {
 
       try {
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`,
+          `${BACKEND_URL}/api/gemini/nutrition`,
           {
             method: "POST",
             headers: {

@@ -441,7 +441,7 @@ export default function AssessmentResults() {
   // AI data processing is handled in the useEffect hook
 
   const dataFromAI = async (childData) => {
-    const GEMINI_API_KEY = "AIzaSyDHAtxtF6mHlOq6GgkbKrr1iCusz42WdLE";
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
     const prompt = `
     You are a medical image analysis AI specialized in pediatric growth assessment. Your task is to analyze baby photographs AND their health data to classify each case based on BOTH visual and contextual indicators of stunting.
 
@@ -546,7 +546,7 @@ export default function AssessmentResults() {
         }
 
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent?key=${GEMINI_API_KEY}`,
+          `${BACKEND_URL}/api/gemini/assessment`,
           {
             method: "POST",
             headers: {

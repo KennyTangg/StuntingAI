@@ -49,22 +49,119 @@ Web app.
 
 # Local setup
 
-```
+## Frontend Setup
+
+```bash
 git clone https://github.com/yourusername/stunting-ai.git
 cd stunting-ai
 npm install
 ```
 
-Create a `.env` file:
+Create a `.env` file in the root directory:
 
 ```
-VITE_GEMINI_API_KEY=your_key_here
+VITE_BACKEND_URL=http://localhost:3001
 ```
 
-Run the app locally:
+## Backend Setup (Secure API Proxy)
+
+```bash
+cd backend
+npm install
+```
+
+Create a `backend/.env` file:
 
 ```
+GEMINI_API_KEY=your_actual_gemini_api_key_here
+PORT=3001
+FRONTEND_URL=http://localhost:5173
+```
+
+## Running the Application
+
+1. **Start the backend** (in one terminal):
+```bash
+cd backend
 npm run dev
+```
+
+2. **Start the frontend** (in another terminal):
+```bash
+npm run dev
+```
+
+The app will be available at `http://localhost:5173` with the secure backend running on `http://localhost:3001`.
+
+## 🔒 Security Best Practices
+
+### API Key Security
+- **Never hardcode API keys** in your source code
+- Use environment variables with the `VITE_` prefix for client-side variables in Vite
+- Keep your `.env` file in `.gitignore` to prevent accidental commits
+- For production deployments, set environment variables in your hosting platform
+
+### Environment Variables
+- `VITE_GEMINI_API_KEY`: Your Google Gemini API key
+- Environment variables prefixed with `VITE_` are exposed to the client-side code
+- **Important**: Since this is a client-side application, the API key will be visible in the browser. For production applications, consider implementing a backend API to proxy requests and keep the API key secure on the server side.
+
+### Deployment Security
+- Set environment variables in your deployment platform (Vercel, Netlify, etc.)
+- Never commit `.env` files to your repository
+- Regularly rotate your API keys
+- Monitor API usage for any suspicious activity
+
+## ⚠️ Important Security Limitation
+
+**Client-Side API Key Exposure**: This is a client-side React application, which means the Gemini API key will be visible to users in the browser's developer tools. This is a fundamental limitation of frontend applications.
+
+### Recommended Production Security Measures:
+
+1. **Implement API Rate Limiting**: Set up rate limiting on your Gemini API key to prevent abuse
+2. **Monitor API Usage**: Regularly check your Google Cloud Console for unusual API usage patterns
+3. **Consider Backend Proxy**: For production applications, implement a backend API that:
+   - Stores the API key securely on the server
+   - Proxies requests to the Gemini API
+   - Implements authentication and rate limiting
+   - Validates and sanitizes user inputs
+
+### Alternative Architecture for Production:
+```
+Frontend (React) → Your Backend API → Gemini API
+```
+This way, the API key remains secure on your server and is never exposed to clients.
+
+## 🚀 Simple Deployment
+
+### Backend Deployment (Railway/Render/Heroku)
+
+1. **Deploy backend** to any Node.js hosting service
+2. **Set environment variables**:
+   - `GEMINI_API_KEY=your_api_key`
+   - `PORT=3001` (or service default)
+   - `FRONTEND_URL=https://your-frontend-domain.com`
+
+### Frontend Deployment (Vercel/Netlify)
+
+1. **Deploy frontend** to static hosting
+2. **Set environment variable**:
+   - `VITE_BACKEND_URL=https://your-backend-domain.com`
+
+### Quick Deploy Commands
+
+**Backend (Railway example):**
+```bash
+cd backend
+railway login
+railway init
+railway add
+railway deploy
+```
+
+**Frontend (Vercel example):**
+```bash
+vercel --prod
 ```
 
 # Demos
